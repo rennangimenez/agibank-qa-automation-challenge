@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    name: API Tests
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run API Tests
+        run: ./mvnw clean test -pl api-tests
+
+      - name: Generate Allure Report
+        if: always()
+        run: allure generate api-tests/target/allure-results -o api-tests/target/allure-report --clean
+
+      - name: Deploy API Report
+        if: always()
+        run: rsync -avz --delete api-tests/target/allure-report/ /srv/apps/agibank-challenge-reports/api/
+
+  web-tests:
+    name: Web Tests
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Playwright Browsers
+        run: ./mvnw exec:java -pl web-tests -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
+
+      - name: Run Web Tests
+        run: ./mvnw clean test -pl web-tests
+
+      - name: Generate Allure Report
+        if: always()
+        run: allure generate web-tests/target/allure-results -o web-tests/target/allure-report --clean
+
+      - name: Deploy Web Report
+        if: always()
+        run: rsync -avz --delete web-tests/target/allure-report/ /srv/apps/agibank-challenge-reports/web/

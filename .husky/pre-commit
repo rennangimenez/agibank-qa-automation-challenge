@@ -1,0 +1,35 @@
+#!/usr/bin/env sh
+
+echo ""
+echo "🔵 Running lint-staged..."
+echo "------------------------------------"
+
+npx lint-staged
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Lint or format check failed. Commit aborted."
+  echo "------------------------------------"
+  exit 1
+fi
+
+echo ""
+echo "🔵 Running Java format check..."
+echo "------------------------------------"
+
+./mvnw spotless:check -q 2>/dev/null
+SPOTLESS_EXIT=$?
+
+if [ $SPOTLESS_EXIT -ne 0 ] && [ $SPOTLESS_EXIT -ne 1 ]; then
+  echo "⚠️  Spotless not available (Maven not configured). Skipping."
+elif [ $SPOTLESS_EXIT -eq 1 ]; then
+  echo ""
+  echo "❌ Java formatting check failed. Run './mvnw spotless:apply' to fix."
+  echo "------------------------------------"
+  exit 1
+fi
+
+echo ""
+echo "✅ All checks passed! Proceeding with commit."
+echo "------------------------------------"
+exit 0

@@ -1,0 +1,7 @@
+target/
+.mvn/
+node_modules/
+*.jmx
+*.class
+*.jar
+*.war

@@ -1,0 +1,32 @@
+name: Performance Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      test-plan:
+        description: 'JMeter test plan to run (without .jmx extension)'
+        required: true
+        default: 'blazedemo-load-test'
+        type: choice
+        options:
+          - blazedemo-load-test
+          - blazedemo-spike-test
+
+jobs:
+  performance:
+    name: Performance Tests - ${{ github.event.inputs.test-plan }}
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run JMeter Tests
+        run: ./mvnw clean verify -pl performance-tests -Djmeter.test=${{ github.event.inputs.test-plan }}
+
+      - name: Deploy Performance Report
+        if: always()
+        run: |
+          REPORT_DIR=$(find performance-tests/target/jmeter/reports -mindepth 1 -maxdepth 1 -type d | head -1)
+          if [ -n "$REPORT_DIR" ]; then
+            rsync -avz --delete "$REPORT_DIR/" /srv/apps/agibank-challenge-reports/performance/
+          fi
