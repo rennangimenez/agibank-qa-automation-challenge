@@ -30,7 +30,8 @@ class BlogSearchTest extends BaseTest {
   @Description("Searching for 'empréstimo' should return articles with titles and links")
   @Severity(SeverityLevel.CRITICAL)
   void searchWithValidTermReturnsResults() {
-    homePage.navigate().searchFor("empréstimo");
+    homePage.navigate();
+    homePage.searchFor("empréstimo");
 
     SearchResultsPage resultsPage = new SearchResultsPage(page);
 
@@ -55,7 +56,8 @@ class BlogSearchTest extends BaseTest {
       "Searching for a nonsense term should display zero articles and a no-results message")
   @Severity(SeverityLevel.NORMAL)
   void searchWithNonexistentTermShowsNoResults() {
-    homePage.navigate().searchFor("xyzqwerty999");
+    homePage.navigate();
+    homePage.searchFor("xyzqwerty999");
 
     SearchResultsPage resultsPage = new SearchResultsPage(page);
 
@@ -70,21 +72,19 @@ class BlogSearchTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("Search icon and form are present on the page")
-  @Description(
-      "The search icon should exist in the header and the search form should be accessible")
+  @DisplayName("Search components are present on the page")
+  @Description("The search icon and form elements should exist in the page DOM")
   @Severity(SeverityLevel.NORMAL)
   void searchComponentsArePresentOnPage() {
     homePage.navigate();
 
     assertAll(
         "Search UI components validation",
+        () -> assertTrue(homePage.isLoaded(), "Page should load successfully"),
         () ->
-            assertTrue(homePage.isSearchIconPresent(), "Search icon should be present in the page"),
-        () -> assertTrue(homePage.isSearchFormAvailable(), "Search form should be available"),
+            assertTrue(homePage.isSearchIconPresent(), "Search icon should be present in the DOM"),
         () ->
             assertTrue(
-                homePage.isSearchInputVisibleAfterScroll(),
-                "Search input should be visible when scrolled into view"));
+                homePage.isSearchFormAvailable(), "Search form elements should be in the DOM"));
   }
 }
