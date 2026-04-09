@@ -20,6 +20,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Verify InfluxDB is reachable
+        run: |
+          if curl -sf http://localhost:8086/ping; then
+            echo "InfluxDB is up - JMeter will send real-time metrics"
+          else
+            echo "WARNING: InfluxDB not reachable - JMeter will run without real-time metrics"
+          fi
+        continue-on-error: true
+
       - name: Run JMeter Tests
         run: ./mvnw clean verify -pl performance-tests -Djmeter.test=${{ github.event.inputs.test-plan }}
 

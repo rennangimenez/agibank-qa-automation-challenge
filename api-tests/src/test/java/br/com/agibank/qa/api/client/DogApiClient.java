@@ -31,4 +31,27 @@ public class DogApiClient {
   public Response getRandomImage() {
     return baseRequest().get("/breeds/image/random");
   }
+
+  @Step("GET /breeds/image/random/{count} - Get {count} random images")
+  public Response getMultipleRandomImages(int count) {
+    return baseRequest().get("/breeds/image/random/" + count);
+  }
+
+  @Step("GET /breed/{breed}/{subBreed}/images - Get images for sub-breed")
+  public Response getSubBreedImages(String breed, String subBreed) {
+    return baseRequest()
+        .pathParam("breed", breed)
+        .pathParam("subBreed", subBreed)
+        .get("/breed/{breed}/{subBreed}/images");
+  }
+
+  @Step("GET /breeds/list/all with custom Content-Type header")
+  public Response getWithCustomHeaders(String contentType) {
+    return baseRequest().header("Content-Type", contentType).get("/breeds/list/all");
+  }
+
+  @Step("GET /breeds/list/all with custom header {headerName}")
+  public Response getWithCustomHeader(String headerName, String headerValue) {
+    return baseRequest().header(headerName, headerValue).get("/breeds/list/all");
+  }
 }

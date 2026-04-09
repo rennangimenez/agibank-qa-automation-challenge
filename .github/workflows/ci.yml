@@ -26,6 +26,17 @@ jobs:
         if: always()
         run: rsync -avz --delete api-tests/target/allure-report/ /srv/apps/agibank-challenge-reports/api/
 
+      - name: Push API Metrics to InfluxDB
+        if: always()
+        run: |
+          chmod +x infra/scripts/push-allure-metrics.sh
+          bash infra/scripts/push-allure-metrics.sh \
+            api-tests/target/allure-report \
+            api \
+            "${{ github.ref_name }}" \
+            "${{ github.sha }}"
+        continue-on-error: true
+
   web-tests:
     name: Web Tests
     runs-on: self-hosted
@@ -49,3 +60,14 @@ jobs:
       - name: Deploy Web Report
         if: always()
         run: rsync -avz --delete web-tests/target/allure-report/ /srv/apps/agibank-challenge-reports/web/
+
+      - name: Push Web Metrics to InfluxDB
+        if: always()
+        run: |
+          chmod +x infra/scripts/push-allure-metrics.sh
+          bash infra/scripts/push-allure-metrics.sh \
+            web-tests/target/allure-report \
+            web \
+            "${{ github.ref_name }}" \
+            "${{ github.sha }}"
+        continue-on-error: true
