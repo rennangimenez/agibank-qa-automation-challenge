@@ -33,8 +33,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Playwright System Dependencies
+        run: sudo npx -y playwright install-deps chromium
+
       - name: Install Playwright Browsers
-        run: ./mvnw exec:java -pl web-tests -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
+        run: ./mvnw exec:java -pl web-tests -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install chromium"
 
       - name: Run Web Tests
         run: ./mvnw clean test -pl web-tests
