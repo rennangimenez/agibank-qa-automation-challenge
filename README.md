@@ -2,9 +2,10 @@
 
 [![CI](https://github.com/rennangimenez/agibank-qa-automation-challenge/actions/workflows/ci.yml/badge.svg)](https://github.com/rennangimenez/agibank-qa-automation-challenge/actions/workflows/ci.yml)
 
-End-to-end QA automation project covering **Web**, **API**, and **Performance** testing using Java 17, Playwright, RestAssured, and JMeter.
+End-to-end QA automation project covering **Web**, **API**, and **Performance** testing using Java 17, Playwright, RestAssured, and JMeter. Includes **security testing**, **observability** with Grafana, and a full CI/CD pipeline.
 
 **Live Reports:** [rennangimenez.com/agibank-challenge](https://rennangimenez.com/agibank-challenge/)
+**Grafana Dashboards:** [rennangimenez.com/grafana](https://rennangimenez.com/grafana/)
 
 ---
 
@@ -12,27 +13,30 @@ End-to-end QA automation project covering **Web**, **API**, and **Performance** 
 
 ```
 agibank-qa-automation-challenge/
-├── web-tests/           Playwright Java — Blog do Agi search
-├── api-tests/           RestAssured — Dog API endpoints
-├── performance-tests/   JMeter — BlazeDemo flight purchase
+├── web-tests/           Playwright Java — Blog do Agi (search, smoke, security)
+├── api-tests/           RestAssured — Dog API (CRUD, edge cases, security)
+├── performance-tests/   JMeter — BlazeDemo flight purchase (load + spike)
+├── infra/               Grafana + InfluxDB + Prometheus (observability)
 ├── .github/workflows/   CI/CD pipelines
+├── docs/                Test plan, performance report
 ├── pom.xml              Parent POM (Maven multi-module)
 └── package.json         Dev tooling (Husky, Prettier)
 ```
 
 ### Tech Stack
 
-| Layer        | Technology                  | Purpose                               |
-| ------------ | --------------------------- | ------------------------------------- |
-| Language     | Java 17                     | Core language                         |
-| Build        | Maven 3.9                   | Multi-module build with Maven Wrapper |
-| Test Runner  | JUnit 5                     | Unified test execution                |
-| Web          | Playwright Java             | Browser automation with auto-waits    |
-| API          | RestAssured                 | HTTP client with fluent assertions    |
-| Performance  | JMeter 5.6                  | Load and spike testing                |
-| Reports      | Allure                      | Interactive HTML reports (Web + API)  |
-| CI/CD        | GitHub Actions              | Self-hosted runner on VPS             |
-| Code Quality | Spotless + Husky + Prettier | Formatting and pre-commit hooks       |
+| Layer         | Technology                      | Purpose                               |
+| ------------- | ------------------------------- | ------------------------------------- |
+| Language      | Java 17                         | Core language                         |
+| Build         | Maven 3.9                       | Multi-module build with Maven Wrapper |
+| Test Runner   | JUnit 5                         | Unified test execution                |
+| Web           | Playwright Java                 | Browser automation with auto-waits    |
+| API           | RestAssured                     | HTTP client with fluent assertions    |
+| Performance   | JMeter 5.6                      | Load and spike testing                |
+| Reports       | Allure                          | Interactive HTML reports (Web + API)  |
+| Observability | Grafana + InfluxDB + Prometheus | Real-time dashboards and metrics      |
+| CI/CD         | GitHub Actions                  | Self-hosted runner on VPS             |
+| Code Quality  | Spotless + Husky + Prettier     | Formatting and pre-commit hooks       |
 
 ### Design Decisions
 
@@ -40,7 +44,34 @@ agibank-qa-automation-challenge/
 - **RestAssured with Client Layer**: Separates HTTP logic from test assertions following SRP; `DogApiClient` encapsulates all API calls, making tests readable and maintainable.
 - **JSON Schema Validation**: Validates API contract structure beyond just status codes, catching breaking changes early.
 - **Maven Multi-Module**: Each test type is an independent module with its own dependencies, avoiding classpath conflicts while sharing common configuration through the parent POM.
-- **Allure Reports**: Rich, interactive reports with step-by-step execution details, attachments, and history trends.
+- **Grafana + InfluxDB**: JMeter sends real-time metrics via Backend Listener, enabling live performance monitoring during test execution.
+- **Security-First Approach**: Security tests document real findings (HTML injection, info disclosure) as positive assertions, demonstrating vulnerability detection capability.
+
+---
+
+## Test Coverage Summary
+
+**Total: 40 automated tests**
+
+| Module              | Tests  | Categories                                                |
+| ------------------- | ------ | --------------------------------------------------------- |
+| Web - Search        | 3      | Functional                                                |
+| Web - Smoke         | 6      | Smoke                                                     |
+| Web - Security      | 5      | Security (SQL Injection, XSS, HTML Injection)             |
+| API - Breed List    | 4      | Functional + Contract                                     |
+| API - Breed Images  | 4      | Functional                                                |
+| API - Random Image  | 3      | Functional + Contract                                     |
+| API - Edge Cases    | 9      | Edge Cases + Functional                                   |
+| API - Security      | 6      | Security (SQL Injection, Path Traversal, Info Disclosure) |
+| Performance - Load  | 1 plan | Load testing (150 threads, 240s)                          |
+| Performance - Spike | 1 plan | Spike testing (3 phases, 200 threads peak)                |
+
+### Security Findings
+
+| ID      | Finding                                                        | Severity | Application |
+| ------- | -------------------------------------------------------------- | -------- | ----------- |
+| WEB-012 | HTML Injection renders as actual DOM element in search results | Critical | Blog do Agi |
+| API-023 | X-Powered-By header exposes PHP/8.3.29                         | Normal   | Dog API     |
 
 ---
 
@@ -74,29 +105,30 @@ npm install
 
 ## Running Tests
 
-### API Tests
+### API Tests (26 tests)
 
 ```bash
 ./mvnw clean test -pl api-tests
 ```
 
-Tests the [Dog API](https://dog.ceo/dog-api/documentation) endpoints:
+Tests the [Dog API](https://dog.ceo/dog-api/documentation):
 
-- `GET /breeds/list/all` — List all breeds with sub-breeds
-- `GET /breed/{breed}/images` — Get images for a specific breed
-- `GET /breeds/image/random` — Get a random dog image
+- Breed list, images, and random image endpoints
+- JSON Schema contract validation
+- Edge cases: special characters, unicode, boundary values
+- Security: SQL injection, path traversal, XSS reflection, header analysis
 
-### Web Tests
+### Web Tests (14 tests)
 
 ```bash
 ./mvnw clean test -pl web-tests
 ```
 
-Tests the [Blog do Agi](https://blogdoagi.com.br/) search functionality:
+Tests the [Blog do Agi](https://blogdoagi.com.br/):
 
-- Search with valid term returns results
-- Search with nonexistent term shows no-results message
-- Search icon visibility and functionality
+- Search with valid/invalid terms
+- Smoke tests (page load, navigation, articles, footer)
+- Security: SQL injection, XSS execution, HTML injection, long input handling
 
 ### Performance Tests
 
@@ -108,10 +140,10 @@ Tests the [Blog do Agi](https://blogdoagi.com.br/) search functionality:
 ./mvnw clean verify -pl performance-tests -Djmeter.test=blazedemo-spike-test
 ```
 
-Tests the [BlazeDemo](https://www.blazedemo.com) flight purchase flow under load:
+Tests the [BlazeDemo](https://www.blazedemo.com) flight purchase flow:
 
-- **Load Test**: Ramp to 150 threads over 60s, sustain for 240s, targeting 250 req/s via Constant Throughput Timer
-- **Spike Test**: 3 phases — base load (30 threads, 60s) → spike (200 threads in 5s, 120s) → cool-down (30 threads, 60s)
+- **Load Test**: Ramp to 150 threads over 60s, sustain for 240s, targeting 250 req/s
+- **Spike Test**: 3 phases -- warm-up (30 threads) -> spike (200 threads) -> cool-down (30 threads)
 
 ### Run All (API + Web)
 
@@ -121,53 +153,54 @@ Tests the [BlazeDemo](https://www.blazedemo.com) flight purchase flow under load
 
 ---
 
-## Reports
-
-### Allure Reports (local)
-
-```bash
-# Generate and open in browser
-./mvnw allure:serve -pl api-tests
-./mvnw allure:serve -pl web-tests
-```
+## Reports & Observability
 
 ### Live Reports
 
 Reports are automatically deployed to the VPS on every CI run:
 
-- **Web Tests**: [rennangimenez.com/agibank-challenge/web/](https://rennangimenez.com/agibank-challenge/web/)
-- **API Tests**: [rennangimenez.com/agibank-challenge/api/](https://rennangimenez.com/agibank-challenge/api/)
-- **Performance**: [rennangimenez.com/agibank-challenge/performance/](https://rennangimenez.com/agibank-challenge/performance/)
+| Report               | URL                                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Web Tests (Allure)   | [rennangimenez.com/agibank-challenge/web/](https://rennangimenez.com/agibank-challenge/web/)                 |
+| API Tests (Allure)   | [rennangimenez.com/agibank-challenge/api/](https://rennangimenez.com/agibank-challenge/api/)                 |
+| Performance (JMeter) | [rennangimenez.com/agibank-challenge/performance/](https://rennangimenez.com/agibank-challenge/performance/) |
+| Grafana Dashboards   | [rennangimenez.com/grafana/](https://rennangimenez.com/grafana/)                                             |
 
-### JMeter Reports (local)
+### Grafana Dashboards
 
-After running performance tests, the HTML report is generated at:
+- **JMeter Performance**: Real-time response times, throughput, error rate, active threads
+- **VPS Infrastructure**: CPU, memory, disk, network (via Prometheus + Node Exporter)
+- **CI/CD Test Results**: Pass/fail trends, suite duration, flakiness history
 
-```
-performance-tests/target/jmeter/reports/
+### Local Reports
+
+```bash
+# Allure
+./mvnw allure:serve -pl api-tests
+./mvnw allure:serve -pl web-tests
+
+# JMeter
+# Report generated at: performance-tests/target/jmeter/reports/
 ```
 
 ---
 
-## Performance Analysis
+## Observability Stack
 
-### Acceptance Criteria
+The project includes a full monitoring stack deployed on the VPS via Docker Compose:
 
-- **Throughput**: 250 requests per second
-- **Response Time**: 90th percentile below 2 seconds
+```
+infra/
+├── docker-compose.yml              Grafana + InfluxDB + Prometheus + Node Exporter
+├── prometheus/prometheus.yml        Prometheus scrape config
+├── grafana/
+│   ├── provisioning/               Auto-configured datasources and dashboard providers
+│   └── dashboards/                 Pre-built dashboard JSONs
+├── scripts/push-allure-metrics.sh  Pushes Allure results to InfluxDB after CI runs
+└── setup-vps.sh                    One-command VPS setup script
+```
 
-### Test Scenario
-
-Full flight purchase flow on BlazeDemo:
-
-1. `GET /` — Home page
-2. `POST /reserve.php` — Search flights (Philadelphia → Buenos Aires)
-3. `POST /purchase.php` — Select flight
-4. `POST /confirmation.php` — Complete purchase
-
-### Results
-
-> Results will be populated after the first execution. See the [live performance report](https://rennangimenez.com/agibank-challenge/performance/) for detailed metrics.
+JMeter test plans include an InfluxDB Backend Listener that sends metrics in real-time during execution, enabling live Grafana dashboards.
 
 ---
 
@@ -175,15 +208,16 @@ Full flight purchase flow on BlazeDemo:
 
 ### Workflows
 
-| Workflow          | Trigger                    | What it does                                        |
-| ----------------- | -------------------------- | --------------------------------------------------- |
-| `ci.yml`          | Push to `main`, PRs        | Runs API + Web tests, deploys Allure reports to VPS |
-| `performance.yml` | Manual (workflow_dispatch) | Runs selected JMeter test plan, deploys HTML report |
+| Workflow          | Trigger                    | What it does                                                             |
+| ----------------- | -------------------------- | ------------------------------------------------------------------------ |
+| `ci.yml`          | Push to `main`, PRs        | Runs API + Web tests, deploys Allure reports, pushes metrics to InfluxDB |
+| `performance.yml` | Manual (workflow_dispatch) | Runs selected JMeter test plan, deploys HTML report to VPS               |
 
 ### Infrastructure
 
 - **Runner**: Self-hosted GitHub Actions runner on VPS (`agibank-vps`)
 - **Reports**: Deployed via `rsync` to `/srv/apps/agibank-challenge-reports/`
+- **Monitoring**: Grafana at `rennangimenez.com/grafana/`
 - **Served by**: Nginx at `rennangimenez.com/agibank-challenge/`
 
 ---
@@ -197,6 +231,13 @@ Full flight purchase flow on BlazeDemo:
 
 ---
 
+## Documentation
+
+- [Test Plan](docs/test-plan.md) -- Complete test plan with all 40 scenarios
+- [Performance Report](docs/performance-report.md) -- Performance test results and analysis
+
+---
+
 ## Project Structure
 
 ```
@@ -205,37 +246,50 @@ Full flight purchase flow on BlazeDemo:
 │   └── src/test/
 │       ├── java/br/com/agibank/qa/api/
 │       │   ├── client/
-│       │   │   └── DogApiClient.java        # HTTP client layer
+│       │   │   └── DogApiClient.java          # HTTP client layer
 │       │   └── tests/
-│       │       ├── BreedListTest.java        # /breeds/list/all
-│       │       ├── BreedImagesTest.java      # /breed/{breed}/images
-│       │       └── RandomImageTest.java      # /breeds/image/random
-│       └── resources/schemas/                # JSON Schema files
+│       │       ├── BreedListTest.java          # /breeds/list/all
+│       │       ├── BreedImagesTest.java        # /breed/{breed}/images
+│       │       ├── RandomImageTest.java        # /breeds/image/random
+│       │       ├── EdgeCaseTest.java           # Edge cases & boundary values
+│       │       └── SecurityTest.java           # SQL injection, path traversal
+│       └── resources/schemas/                  # JSON Schema files
 │
 ├── web-tests/
 │   ├── pom.xml
 │   └── src/test/java/br/com/agibank/qa/web/
 │       ├── base/
-│       │   └── BaseTest.java                 # Playwright lifecycle
+│       │   └── BaseTest.java                   # Playwright lifecycle
 │       ├── pages/
-│       │   ├── BlogHomePage.java             # Home page actions
-│       │   └── SearchResultsPage.java        # Results page assertions
+│       │   ├── BlogHomePage.java               # Home page actions
+│       │   └── SearchResultsPage.java          # Results page assertions
 │       └── tests/
-│           └── BlogSearchTest.java           # Search scenarios
+│           ├── BlogSearchTest.java             # Search scenarios
+│           ├── BlogSmokeTest.java              # Smoke tests
+│           └── BlogSecurityTest.java           # Security tests
 │
 ├── performance-tests/
 │   ├── pom.xml
 │   └── src/test/jmeter/
-│       ├── blazedemo-load-test.jmx           # Sustained load test
-│       └── blazedemo-spike-test.jmx          # Spike/burst test
+│       ├── blazedemo-load-test.jmx             # Sustained load test
+│       └── blazedemo-spike-test.jmx            # Spike/burst test
+│
+├── infra/                                      # Monitoring stack
+│   ├── docker-compose.yml                      # Grafana + InfluxDB + Prometheus
+│   ├── grafana/dashboards/                     # Dashboard JSONs
+│   └── scripts/push-allure-metrics.sh          # CI metrics integration
 │
 ├── .github/workflows/
-│   ├── ci.yml                                # API + Web CI
-│   └── performance.yml                       # Manual perf trigger
+│   ├── ci.yml                                  # API + Web CI with metrics push
+│   └── performance.yml                         # Manual perf trigger
 │
-├── pom.xml                                   # Parent POM
-├── mvnw / mvnw.cmd                           # Maven Wrapper
-├── package.json                              # Husky + Prettier
+├── docs/
+│   ├── test-plan.md                            # Complete test plan
+│   └── performance-report.md                   # Performance results
+│
+├── pom.xml                                     # Parent POM
+├── mvnw / mvnw.cmd                             # Maven Wrapper
+├── package.json                                # Husky + Prettier
 └── README.md
 ```
 
@@ -243,4 +297,4 @@ Full flight purchase flow on BlazeDemo:
 
 ## Author
 
-**Rennan Gimenez** — [GitHub](https://github.com/rennangimenez) | [Portfolio](https://rennangimenez.com)
+**Rennan Gimenez** -- [GitHub](https://github.com/rennangimenez) | [Portfolio](https://rennangimenez.com)
