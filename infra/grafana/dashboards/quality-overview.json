@@ -50,7 +50,7 @@
     {
       "collapsed": false,
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
-      "id": 100,
+      "id": 1,
       "title": "Web Tests",
       "type": "row"
     },
@@ -238,9 +238,42 @@
       "datasource": "InfluxDB-JMeter",
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
-          "max": 100,
-          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "super-light-green", "value": null },
+              { "color": "light-yellow", "value": 1000 },
+              { "color": "light-orange", "value": 3000 },
+              { "color": "light-red", "value": 5000 }
+            ]
+          },
+          "unit": "ms"
+        }
+      },
+      "gridPos": { "h": 3, "w": 3, "x": 18, "y": 1 },
+      "id": 108,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "alias": "Avg/Test",
+          "query": "SELECT last(\"avg_test_duration\") FROM \"test_results\" WHERE \"test_type\" = 'web' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Avg / Test",
+      "type": "stat"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -253,13 +286,13 @@
           "unit": "percent"
         }
       },
-      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 1 },
+      "gridPos": { "h": 3, "w": 3, "x": 21, "y": 1 },
       "id": 107,
       "options": {
-        "orientation": "auto",
+        "colorMode": "background",
+        "graphMode": "none",
         "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "textMode": "auto"
       },
       "targets": [
         {
@@ -270,83 +303,14 @@
           "resultFormat": "time_series"
         }
       ],
-      "title": "Web Pass Rate",
-      "type": "gauge"
+      "title": "Pass Rate",
+      "type": "stat"
     },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "spanNulls": false,
-            "stacking": { "mode": "normal" }
-          },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "passed" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "failed" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "broken" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "skipped" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }]
-          }
-        ]
-      },
-      "gridPos": { "h": 7, "w": 18, "x": 0, "y": 4 },
-      "id": 110,
-      "options": {
-        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right" },
-        "tooltip": { "mode": "multi" }
-      },
-      "targets": [
-        {
-          "alias": "passed",
-          "query": "SELECT \"passed\" FROM \"test_results\" WHERE \"test_type\" = 'web' AND $timeFilter",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        },
-        {
-          "alias": "failed",
-          "query": "SELECT \"failed\" FROM \"test_results\" WHERE \"test_type\" = 'web' AND $timeFilter",
-          "rawQuery": true,
-          "refId": "B",
-          "resultFormat": "time_series"
-        },
-        {
-          "alias": "broken",
-          "query": "SELECT \"broken\" FROM \"test_results\" WHERE \"test_type\" = 'web' AND $timeFilter",
-          "rawQuery": true,
-          "refId": "C",
-          "resultFormat": "time_series"
-        },
-        {
-          "alias": "skipped",
-          "query": "SELECT \"skipped\" FROM \"test_results\" WHERE \"test_type\" = 'web' AND $timeFilter",
-          "rawQuery": true,
-          "refId": "D",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "Web Results Trend",
-      "type": "timeseries"
-    },
+
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 11 },
-      "id": 200,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 4 },
+      "id": 2,
       "title": "API Tests",
       "type": "row"
     },
@@ -358,7 +322,7 @@
           "unit": "short"
         }
       },
-      "gridPos": { "h": 3, "w": 3, "x": 0, "y": 12 },
+      "gridPos": { "h": 3, "w": 3, "x": 0, "y": 5 },
       "id": 201,
       "options": {
         "colorMode": "background",
@@ -386,7 +350,7 @@
           "unit": "short"
         }
       },
-      "gridPos": { "h": 3, "w": 3, "x": 3, "y": 12 },
+      "gridPos": { "h": 3, "w": 3, "x": 3, "y": 5 },
       "id": 202,
       "options": {
         "colorMode": "background",
@@ -420,7 +384,7 @@
           "unit": "short"
         }
       },
-      "gridPos": { "h": 3, "w": 3, "x": 6, "y": 12 },
+      "gridPos": { "h": 3, "w": 3, "x": 6, "y": 5 },
       "id": 203,
       "options": {
         "colorMode": "background",
@@ -454,7 +418,7 @@
           "unit": "short"
         }
       },
-      "gridPos": { "h": 3, "w": 3, "x": 9, "y": 12 },
+      "gridPos": { "h": 3, "w": 3, "x": 9, "y": 5 },
       "id": 204,
       "options": {
         "colorMode": "background",
@@ -482,7 +446,7 @@
           "unit": "short"
         }
       },
-      "gridPos": { "h": 3, "w": 3, "x": 12, "y": 12 },
+      "gridPos": { "h": 3, "w": 3, "x": 12, "y": 5 },
       "id": 205,
       "options": {
         "colorMode": "background",
@@ -510,7 +474,7 @@
           "unit": "s"
         }
       },
-      "gridPos": { "h": 3, "w": 3, "x": 15, "y": 12 },
+      "gridPos": { "h": 3, "w": 3, "x": 15, "y": 5 },
       "id": 206,
       "options": {
         "colorMode": "background",
@@ -534,9 +498,42 @@
       "datasource": "InfluxDB-JMeter",
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
-          "max": 100,
-          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "super-light-green", "value": null },
+              { "color": "light-yellow", "value": 1000 },
+              { "color": "light-orange", "value": 3000 },
+              { "color": "light-red", "value": 5000 }
+            ]
+          },
+          "unit": "ms"
+        }
+      },
+      "gridPos": { "h": 3, "w": 3, "x": 18, "y": 5 },
+      "id": 208,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "alias": "Avg/Test",
+          "query": "SELECT last(\"avg_test_duration\") FROM \"test_results\" WHERE \"test_type\" = 'api' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Avg / Test",
+      "type": "stat"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -549,13 +546,13 @@
           "unit": "percent"
         }
       },
-      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 12 },
+      "gridPos": { "h": 3, "w": 3, "x": 21, "y": 5 },
       "id": 207,
       "options": {
-        "orientation": "auto",
+        "colorMode": "background",
+        "graphMode": "none",
         "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "textMode": "auto"
       },
       "targets": [
         {
@@ -566,83 +563,140 @@
           "resultFormat": "time_series"
         }
       ],
-      "title": "API Pass Rate",
-      "type": "gauge"
+      "title": "Pass Rate",
+      "type": "stat"
+    },
+
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 8 },
+      "id": 3,
+      "title": "Cumulative Totals",
+      "type": "row"
     },
     {
       "datasource": "InfluxDB-JMeter",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "spanNulls": false,
-            "stacking": { "mode": "normal" }
-          },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#37872D", "value": null }] },
           "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "passed" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "failed" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "broken" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "skipped" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }]
-          }
-        ]
+        }
       },
-      "gridPos": { "h": 7, "w": 18, "x": 0, "y": 15 },
-      "id": 210,
+      "gridPos": { "h": 3, "w": 6, "x": 0, "y": 9 },
+      "id": 401,
       "options": {
-        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right" },
-        "tooltip": { "mode": "multi" }
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "textMode": "auto"
       },
       "targets": [
         {
-          "alias": "passed",
-          "query": "SELECT \"passed\" FROM \"test_results\" WHERE \"test_type\" = 'api' AND $timeFilter",
+          "alias": "Total Tests Executed",
+          "query": "SELECT sum(\"total_tests\") FROM \"test_executions_cumulative\" WHERE $timeFilter",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series"
-        },
+        }
+      ],
+      "title": "Tests Executed (All Time)",
+      "type": "stat"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#5794F2", "value": null }] },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 3, "w": 6, "x": 6, "y": 9 },
+      "id": 402,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
         {
-          "alias": "failed",
-          "query": "SELECT \"failed\" FROM \"test_results\" WHERE \"test_type\" = 'api' AND $timeFilter",
+          "alias": "Total Runs",
+          "query": "SELECT sum(\"total_runs\") FROM \"test_executions_cumulative\" WHERE $timeFilter",
           "rawQuery": true,
-          "refId": "B",
-          "resultFormat": "time_series"
-        },
-        {
-          "alias": "broken",
-          "query": "SELECT \"broken\" FROM \"test_results\" WHERE \"test_type\" = 'api' AND $timeFilter",
-          "rawQuery": true,
-          "refId": "C",
-          "resultFormat": "time_series"
-        },
-        {
-          "alias": "skipped",
-          "query": "SELECT \"skipped\" FROM \"test_results\" WHERE \"test_type\" = 'api' AND $timeFilter",
-          "rawQuery": true,
-          "refId": "D",
+          "refId": "A",
           "resultFormat": "time_series"
         }
       ],
-      "title": "API Results Trend",
-      "type": "timeseries"
+      "title": "Pipeline Runs (All Time)",
+      "type": "stat"
     },
     {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 3, "w": 6, "x": 12, "y": 9 },
+      "id": 403,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "alias": "Total Passed",
+          "query": "SELECT sum(\"total_passed\") FROM \"test_executions_cumulative\" WHERE $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Total Passed (All Time)",
+      "type": "stat"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 3, "w": 6, "x": 18, "y": 9 },
+      "id": 404,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "alias": "Total Failed",
+          "query": "SELECT sum(\"total_failed\") FROM \"test_executions_cumulative\" WHERE $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Total Failed (All Time)",
+      "type": "stat"
+    },
+
+    {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 22 },
-      "id": 300,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 12 },
+      "id": 4,
       "title": "Trends & Comparison",
       "type": "row"
     },
@@ -664,7 +718,7 @@
           }
         ]
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 23 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 13 },
       "id": 301,
       "options": {
         "legend": {
@@ -704,7 +758,7 @@
           }
         ]
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 23 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 13 },
       "id": 302,
       "options": {
         "legend": {
@@ -730,296 +784,6 @@
       "datasource": "InfluxDB-JMeter",
       "fieldConfig": {
         "defaults": {
-          "custom": { "lineWidth": 2, "fillOpacity": 15, "spanNulls": false },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "web" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "api" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }]
-          }
-        ]
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 31 },
-      "id": 303,
-      "options": {
-        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom" },
-        "tooltip": { "mode": "multi" }
-      },
-      "targets": [
-        {
-          "alias": "$tag_test_type",
-          "query": "SELECT \"total\" FROM \"test_results\" WHERE $timeFilter GROUP BY \"test_type\"",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "Total Executions Over Time",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
-          "custom": { "lineWidth": 2, "fillOpacity": 15, "spanNulls": false },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "web" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "api" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }]
-          }
-        ]
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 31 },
-      "id": 304,
-      "options": {
-        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom" },
-        "tooltip": { "mode": "multi" }
-      },
-      "targets": [
-        {
-          "alias": "$tag_test_type",
-          "query": "SELECT \"flaky_count\" FROM \"test_stability\" WHERE $timeFilter GROUP BY \"test_type\"",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "Flaky Tests Over Time",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 39 },
-      "id": 400,
-      "title": "Cumulative Metrics & Severity Breakdown",
-      "type": "row"
-    },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "#37872D", "value": null }] },
-          "unit": "short"
-        }
-      },
-      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 40 },
-      "id": 401,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
-        "textMode": "auto"
-      },
-      "targets": [
-        {
-          "alias": "Total Tests Executed",
-          "query": "SELECT sum(\"total_tests\") FROM \"test_executions_cumulative\" WHERE $timeFilter",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "Total Tests Executed (All Time)",
-      "type": "stat"
-    },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "#5794F2", "value": null }] },
-          "unit": "short"
-        }
-      },
-      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 40 },
-      "id": 402,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
-        "textMode": "auto"
-      },
-      "targets": [
-        {
-          "alias": "Total Runs",
-          "query": "SELECT sum(\"total_runs\") FROM \"test_executions_cumulative\" WHERE $timeFilter",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "Total Pipeline Runs (All Time)",
-      "type": "stat"
-    },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
-          "unit": "short"
-        }
-      },
-      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 40 },
-      "id": 403,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
-        "textMode": "auto"
-      },
-      "targets": [
-        {
-          "alias": "Total Passed",
-          "query": "SELECT sum(\"total_passed\") FROM \"test_executions_cumulative\" WHERE $timeFilter",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "Total Passed (All Time)",
-      "type": "stat"
-    },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "green", "value": null },
-              { "color": "red", "value": 1 }
-            ]
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 40 },
-      "id": 404,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
-        "textMode": "auto"
-      },
-      "targets": [
-        {
-          "alias": "Total Failed",
-          "query": "SELECT sum(\"total_failed\") FROM \"test_executions_cumulative\" WHERE $timeFilter",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "Total Failed (All Time)",
-      "type": "stat"
-    },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "thresholds" },
-          "max": 5000,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 2000 },
-              { "color": "orange", "value": 3000 },
-              { "color": "red", "value": 5000 }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "web" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "api" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }]
-          }
-        ]
-      },
-      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 40 },
-      "id": 405,
-      "options": {
-        "orientation": "horizontal",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "targets": [
-        {
-          "alias": "$tag_test_type",
-          "query": "SELECT last(\"avg_test_duration\") FROM \"test_results\" WHERE $timeFilter GROUP BY \"test_type\"",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "Avg Duration per Test (Web vs API)",
-      "type": "gauge"
-    },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 15,
-            "spanNulls": false
-          },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "web" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "api" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }]
-          }
-        ]
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 44 },
-      "id": 406,
-      "options": {
-        "legend": {
-          "calcs": ["sum", "lastNotNull"],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": { "mode": "multi" }
-      },
-      "targets": [
-        {
-          "alias": "$tag_test_type",
-          "query": "SELECT cumulative_sum(sum(\"total_tests\")) FROM \"test_executions_cumulative\" WHERE $timeFilter GROUP BY \"test_type\", time(1d) fill(0)",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "Cumulative Tests Executed Over Time",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
           "custom": { "lineWidth": 2, "fillOpacity": 10, "spanNulls": false },
           "unit": "ms"
         },
@@ -1034,7 +798,7 @@
           }
         ]
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 44 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 21 },
       "id": 407,
       "options": {
         "legend": {
@@ -1060,157 +824,463 @@
       "datasource": "InfluxDB-JMeter",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "lineWidth": 0,
-            "fillOpacity": 80,
-            "stacking": { "mode": "normal" },
-            "barAlignment": 0
-          },
+          "custom": { "lineWidth": 2, "fillOpacity": 15, "spanNulls": false },
           "unit": "short"
         },
         "overrides": [
           {
-            "matcher": { "id": "byName", "options": "blocker" },
-            "properties": [
-              { "id": "color", "value": { "fixedColor": "dark-red", "mode": "fixed" } }
-            ]
+            "matcher": { "id": "byName", "options": "web" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }]
           },
           {
-            "matcher": { "id": "byName", "options": "critical" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "normal" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "minor" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "trivial" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }]
+            "matcher": { "id": "byName", "options": "api" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }]
           }
         ]
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 52 },
-      "id": 408,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 21 },
+      "id": 304,
       "options": {
-        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right" },
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom" },
         "tooltip": { "mode": "multi" }
       },
       "targets": [
         {
-          "alias": "$tag_severity",
-          "query": "SELECT last(\"total\") FROM \"test_severity\" WHERE \"test_type\" = 'web' AND $timeFilter GROUP BY \"severity\"",
+          "alias": "$tag_test_type",
+          "query": "SELECT \"flaky_count\" FROM \"test_stability\" WHERE $timeFilter GROUP BY \"test_type\"",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series"
         }
       ],
-      "title": "Web Tests by Severity",
-      "type": "barchart"
-    },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "lineWidth": 0,
-            "fillOpacity": 80,
-            "stacking": { "mode": "normal" },
-            "barAlignment": 0
-          },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "blocker" },
-            "properties": [
-              { "id": "color", "value": { "fixedColor": "dark-red", "mode": "fixed" } }
-            ]
-          },
-          {
-            "matcher": { "id": "byName", "options": "critical" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "normal" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "minor" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "trivial" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }]
-          }
-        ]
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 52 },
-      "id": 409,
-      "options": {
-        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right" },
-        "tooltip": { "mode": "multi" }
-      },
-      "targets": [
-        {
-          "alias": "$tag_severity",
-          "query": "SELECT last(\"total\") FROM \"test_severity\" WHERE \"test_type\" = 'api' AND $timeFilter GROUP BY \"severity\"",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "API Tests by Severity",
-      "type": "barchart"
-    },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
-          "custom": { "lineWidth": 2, "fillOpacity": 10, "spanNulls": false },
-          "unit": "percent"
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "blocker" },
-            "properties": [
-              { "id": "color", "value": { "fixedColor": "dark-red", "mode": "fixed" } }
-            ]
-          },
-          {
-            "matcher": { "id": "byName", "options": "critical" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "normal" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" } }]
-          }
-        ]
-      },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 60 },
-      "id": 410,
-      "options": {
-        "legend": {
-          "calcs": ["mean", "lastNotNull"],
-          "displayMode": "table",
-          "placement": "right"
-        },
-        "tooltip": { "mode": "multi" }
-      },
-      "targets": [
-        {
-          "alias": "$tag_severity",
-          "query": "SELECT \"pass_rate\" FROM \"test_severity\" WHERE $timeFilter GROUP BY \"severity\"",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "Pass Rate by Severity Over Time",
+      "title": "Flaky Tests Over Time",
       "type": "timeseries"
+    },
+
+    {
+      "collapsed": true,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 29 },
+      "id": 5,
+      "title": "Detailed Results (Web & API)",
+      "type": "row",
+      "panels": [
+        {
+          "datasource": "InfluxDB-JMeter",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 20,
+                "spanNulls": false,
+                "stacking": { "mode": "normal" }
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "passed" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "failed" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "broken" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "skipped" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }
+                ]
+              }
+            ]
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 30 },
+          "id": 110,
+          "options": {
+            "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right" },
+            "tooltip": { "mode": "multi" }
+          },
+          "targets": [
+            {
+              "alias": "passed",
+              "query": "SELECT \"passed\" FROM \"test_results\" WHERE \"test_type\" = 'web' AND $timeFilter",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series"
+            },
+            {
+              "alias": "failed",
+              "query": "SELECT \"failed\" FROM \"test_results\" WHERE \"test_type\" = 'web' AND $timeFilter",
+              "rawQuery": true,
+              "refId": "B",
+              "resultFormat": "time_series"
+            },
+            {
+              "alias": "broken",
+              "query": "SELECT \"broken\" FROM \"test_results\" WHERE \"test_type\" = 'web' AND $timeFilter",
+              "rawQuery": true,
+              "refId": "C",
+              "resultFormat": "time_series"
+            },
+            {
+              "alias": "skipped",
+              "query": "SELECT \"skipped\" FROM \"test_results\" WHERE \"test_type\" = 'web' AND $timeFilter",
+              "rawQuery": true,
+              "refId": "D",
+              "resultFormat": "time_series"
+            }
+          ],
+          "title": "Web Results Trend",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "InfluxDB-JMeter",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 20,
+                "spanNulls": false,
+                "stacking": { "mode": "normal" }
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "passed" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "failed" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "broken" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "skipped" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }
+                ]
+              }
+            ]
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 30 },
+          "id": 210,
+          "options": {
+            "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right" },
+            "tooltip": { "mode": "multi" }
+          },
+          "targets": [
+            {
+              "alias": "passed",
+              "query": "SELECT \"passed\" FROM \"test_results\" WHERE \"test_type\" = 'api' AND $timeFilter",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series"
+            },
+            {
+              "alias": "failed",
+              "query": "SELECT \"failed\" FROM \"test_results\" WHERE \"test_type\" = 'api' AND $timeFilter",
+              "rawQuery": true,
+              "refId": "B",
+              "resultFormat": "time_series"
+            },
+            {
+              "alias": "broken",
+              "query": "SELECT \"broken\" FROM \"test_results\" WHERE \"test_type\" = 'api' AND $timeFilter",
+              "rawQuery": true,
+              "refId": "C",
+              "resultFormat": "time_series"
+            },
+            {
+              "alias": "skipped",
+              "query": "SELECT \"skipped\" FROM \"test_results\" WHERE \"test_type\" = 'api' AND $timeFilter",
+              "rawQuery": true,
+              "refId": "D",
+              "resultFormat": "time_series"
+            }
+          ],
+          "title": "API Results Trend",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "InfluxDB-JMeter",
+          "fieldConfig": {
+            "defaults": {
+              "custom": { "lineWidth": 2, "fillOpacity": 15, "spanNulls": false },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "web" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "api" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }
+                ]
+              }
+            ]
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 38 },
+          "id": 303,
+          "options": {
+            "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom" },
+            "tooltip": { "mode": "multi" }
+          },
+          "targets": [
+            {
+              "alias": "$tag_test_type",
+              "query": "SELECT \"total\" FROM \"test_results\" WHERE $timeFilter GROUP BY \"test_type\"",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series"
+            }
+          ],
+          "title": "Total Executions Over Time",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "InfluxDB-JMeter",
+          "fieldConfig": {
+            "defaults": {
+              "custom": { "lineWidth": 2, "fillOpacity": 15, "spanNulls": false },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "web" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "api" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }
+                ]
+              }
+            ]
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 38 },
+          "id": 406,
+          "options": {
+            "legend": {
+              "calcs": ["sum", "lastNotNull"],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": { "mode": "multi" }
+          },
+          "targets": [
+            {
+              "alias": "$tag_test_type",
+              "query": "SELECT cumulative_sum(sum(\"total_tests\")) FROM \"test_executions_cumulative\" WHERE $timeFilter GROUP BY \"test_type\", time(1d) fill(0)",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series"
+            }
+          ],
+          "title": "Cumulative Tests Executed Over Time",
+          "type": "timeseries"
+        }
+      ]
+    },
+
+    {
+      "collapsed": true,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 30 },
+      "id": 6,
+      "title": "Severity Breakdown",
+      "type": "row",
+      "panels": [
+        {
+          "datasource": "InfluxDB-JMeter",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "lineWidth": 0,
+                "fillOpacity": 80,
+                "stacking": { "mode": "normal" },
+                "barAlignment": 0
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "blocker" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "dark-red", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "critical" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "normal" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "minor" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "trivial" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }
+                ]
+              }
+            ]
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 31 },
+          "id": 408,
+          "options": {
+            "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right" },
+            "tooltip": { "mode": "multi" }
+          },
+          "targets": [
+            {
+              "alias": "$tag_severity",
+              "query": "SELECT last(\"total\") FROM \"test_severity\" WHERE \"test_type\" = 'web' AND $timeFilter GROUP BY \"severity\"",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series"
+            }
+          ],
+          "title": "Web Tests by Severity",
+          "type": "barchart"
+        },
+        {
+          "datasource": "InfluxDB-JMeter",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "lineWidth": 0,
+                "fillOpacity": 80,
+                "stacking": { "mode": "normal" },
+                "barAlignment": 0
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "blocker" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "dark-red", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "critical" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "normal" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "minor" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "trivial" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }
+                ]
+              }
+            ]
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 31 },
+          "id": 409,
+          "options": {
+            "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right" },
+            "tooltip": { "mode": "multi" }
+          },
+          "targets": [
+            {
+              "alias": "$tag_severity",
+              "query": "SELECT last(\"total\") FROM \"test_severity\" WHERE \"test_type\" = 'api' AND $timeFilter GROUP BY \"severity\"",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series"
+            }
+          ],
+          "title": "API Tests by Severity",
+          "type": "barchart"
+        },
+        {
+          "datasource": "InfluxDB-JMeter",
+          "fieldConfig": {
+            "defaults": {
+              "custom": { "lineWidth": 2, "fillOpacity": 10, "spanNulls": false },
+              "unit": "percent"
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "blocker" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "dark-red", "mode": "fixed" } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "critical" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "normal" },
+                "properties": [
+                  { "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" } }
+                ]
+              }
+            ]
+          },
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 39 },
+          "id": 410,
+          "options": {
+            "legend": {
+              "calcs": ["mean", "lastNotNull"],
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": { "mode": "multi" }
+          },
+          "targets": [
+            {
+              "alias": "$tag_severity",
+              "query": "SELECT \"pass_rate\" FROM \"test_severity\" WHERE $timeFilter GROUP BY \"severity\"",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series"
+            }
+          ],
+          "title": "Pass Rate by Severity Over Time",
+          "type": "timeseries"
+        }
+      ]
     }
   ],
   "refresh": "10s",
@@ -1222,5 +1292,5 @@
   "timezone": "",
   "title": "Quality Overview",
   "uid": "quality-overview",
-  "version": 2
+  "version": 3
 }
