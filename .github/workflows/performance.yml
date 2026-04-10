@@ -51,12 +51,30 @@ jobs:
       - name: Run JMeter Tests
         run: ./mvnw clean verify -pl performance-tests -Djmeter.test=${{ env.TEST_PLAN }}
 
+      - name: Generate custom performance report
+        if: always()
+        run: |
+          CSV_FILE=$(find performance-tests/target/jmeter/results -name "*.csv" | head -1)
+          if [ -n "$CSV_FILE" ]; then
+            TEST_DISPLAY_NAME=$(echo "${{ env.TEST_PLAN }}" | sed 's/-/ /g' | sed 's/blazedemo //g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1')
+            python3 infra/scripts/generate-performance-report.py \
+              "$CSV_FILE" \
+              performance-tests/target/custom-report \
+              "$TEST_DISPLAY_NAME"
+          else
+            echo "WARNING: No CSV results found, skipping custom report"
+          fi
+
       - name: Deploy Performance Report
         if: always()
         run: |
           REPORT_DIR=$(find performance-tests/target/jmeter/reports -mindepth 1 -maxdepth 1 -type d | head -1)
+          DEPLOY_DIR="/srv/apps/agibank-challenge-reports/performance"
           if [ -n "$REPORT_DIR" ]; then
-            rsync -avz --delete "$REPORT_DIR/" /srv/apps/agibank-challenge-reports/performance/
+            rsync -avz --delete "$REPORT_DIR/" "$DEPLOY_DIR/jmeter-dashboard/"
+          fi
+          if [ -f "performance-tests/target/custom-report/index.html" ]; then
+            cp performance-tests/target/custom-report/index.html "$DEPLOY_DIR/index.html"
           fi
 
       - name: Push Pipeline Metrics
