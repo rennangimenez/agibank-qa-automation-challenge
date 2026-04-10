@@ -1,0 +1,578 @@
+/* ============================================================
+   🌙 AgiBank QA — Allure Dark Theme
+   Comprehensive dark mode override for Allure Report 2.x
+   ============================================================ */
+
+:root {
+  --dark-bg: #0f172a;
+  --dark-surface: #1e293b;
+  --dark-surface2: #334155;
+  --dark-surface3: #475569;
+  --dark-border: #475569;
+  --dark-text: #e2e8f0;
+  --dark-text-muted: #94a3b8;
+  --dark-text-dim: #64748b;
+  --dark-accent: #60a5fa;
+  --dark-accent-hover: #93bbfd;
+  --dark-link: #60a5fa;
+  --dark-passed: #34d399;
+  --dark-failed: #f87171;
+  --dark-broken: #fbbf24;
+  --dark-skipped: #94a3b8;
+  --dark-unknown: #a78bfa;
+}
+
+/* ── Global Background ──────────────────────────────────── */
+
+body,
+.app,
+.app__content {
+  background-color: var(--dark-bg) !important;
+  color: var(--dark-text) !important;
+}
+
+/* ── Side Navigation ────────────────────────────────────── */
+
+.side-nav {
+  background: var(--dark-surface) !important;
+  border-right: 1px solid var(--dark-border) !important;
+}
+
+.side-nav__brand {
+  background: var(--dark-surface) !important;
+  border-bottom: 1px solid var(--dark-border) !important;
+}
+
+.side-nav__brand-text,
+.side-nav__brand-text span {
+  color: var(--dark-text) !important;
+}
+
+.side-nav__item,
+.side-nav__link {
+  color: var(--dark-text-muted) !important;
+}
+
+.side-nav__link:hover,
+.side-nav__item:hover .side-nav__link {
+  color: var(--dark-text) !important;
+  background: var(--dark-surface2) !important;
+}
+
+.side-nav__item_active .side-nav__link,
+.side-nav__link_active {
+  color: var(--dark-accent) !important;
+  background: var(--dark-bg) !important;
+  border-left-color: var(--dark-accent) !important;
+}
+
+.side-nav__collapse {
+  color: var(--dark-text-muted) !important;
+  border-top: 1px solid var(--dark-border) !important;
+}
+
+.side-nav__footer {
+  border-top: 1px solid var(--dark-border) !important;
+  color: var(--dark-text-dim) !important;
+}
+
+/* ── Pane / Content Area ────────────────────────────────── */
+
+.pane,
+.pane__section {
+  background: var(--dark-bg) !important;
+  color: var(--dark-text) !important;
+}
+
+.pane__title,
+.pane__section-title {
+  color: var(--dark-text) !important;
+}
+
+/* ── Island (Card containers) ───────────────────────────── */
+
+.island,
+.widget,
+.widget__body {
+  background: var(--dark-surface) !important;
+  border: 1px solid var(--dark-border) !important;
+  border-radius: 8px !important;
+}
+
+.widget__title,
+.island__title {
+  color: var(--dark-text) !important;
+  border-bottom: 1px solid var(--dark-border) !important;
+}
+
+.widget__subtitle {
+  color: var(--dark-text-muted) !important;
+}
+
+/* ── Tabs ───────────────────────────────────────────────── */
+
+.tab {
+  color: var(--dark-text-muted) !important;
+}
+
+.tab:hover {
+  color: var(--dark-text) !important;
+}
+
+.tab_active,
+.tab__title_active {
+  color: var(--dark-accent) !important;
+  border-bottom-color: var(--dark-accent) !important;
+}
+
+.tabs__list {
+  border-bottom: 1px solid var(--dark-border) !important;
+}
+
+/* ── Tables ─────────────────────────────────────────────── */
+
+.table,
+table {
+  color: var(--dark-text) !important;
+}
+
+.table__head,
+thead {
+  background: var(--dark-surface2) !important;
+}
+
+.table__head th,
+thead th {
+  color: var(--dark-text-muted) !important;
+  border-bottom: 2px solid var(--dark-border) !important;
+  background: var(--dark-surface2) !important;
+}
+
+.table__body tr,
+tbody tr {
+  border-bottom: 1px solid var(--dark-border) !important;
+}
+
+.table__body tr:hover,
+tbody tr:hover {
+  background: var(--dark-surface) !important;
+}
+
+.table__body td,
+tbody td {
+  color: var(--dark-text) !important;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.5) !important;
+}
+
+.table__row_status_passed {
+  border-left-color: var(--dark-passed) !important;
+}
+
+.table__row_status_failed {
+  border-left-color: var(--dark-failed) !important;
+}
+
+.table__row_status_broken {
+  border-left-color: var(--dark-broken) !important;
+}
+
+.table__row_status_skipped {
+  border-left-color: var(--dark-skipped) !important;
+}
+
+/* ── Tree / Suites List ─────────────────────────────────── */
+
+.tree__info {
+  color: var(--dark-text-muted) !important;
+}
+
+.tree__title {
+  color: var(--dark-text) !important;
+}
+
+.tree-leaf,
+.tree__leaf {
+  border-bottom: 1px solid rgba(71, 85, 105, 0.3) !important;
+}
+
+.tree-leaf:hover,
+.tree__leaf:hover {
+  background: var(--dark-surface) !important;
+}
+
+.tree-leaf__title,
+.tree__leaf-title {
+  color: var(--dark-text) !important;
+}
+
+.tree__group {
+  border-bottom: 1px solid var(--dark-border) !important;
+}
+
+/* ── Statistic bar / Progress ───────────────────────────── */
+
+.status-details__message,
+.status-details__trace {
+  background: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+  border: 1px solid var(--dark-border) !important;
+}
+
+/* ── Steps ──────────────────────────────────────────────── */
+
+.step__title,
+.step__name {
+  color: var(--dark-text) !important;
+}
+
+.step__content {
+  border-left: 1px solid var(--dark-border) !important;
+}
+
+/* ── Attachments ────────────────────────────────────────── */
+
+.attachment__name,
+.attachment__title {
+  color: var(--dark-text) !important;
+}
+
+.attachment {
+  background: var(--dark-surface) !important;
+  border: 1px solid var(--dark-border) !important;
+}
+
+/* ── Links ──────────────────────────────────────────────── */
+
+a {
+  color: var(--dark-link) !important;
+}
+
+a:hover {
+  color: var(--dark-accent-hover) !important;
+}
+
+/* ── Labels / Tags ──────────────────────────────────────── */
+
+.label,
+.tag {
+  background: var(--dark-surface2) !important;
+  color: var(--dark-text) !important;
+  border: 1px solid var(--dark-border) !important;
+}
+
+/* ── Tooltips ───────────────────────────────────────────── */
+
+.tooltip,
+.popover {
+  background: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+  border: 1px solid var(--dark-border) !important;
+}
+
+.tooltip-inner {
+  background: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
+
+.button,
+button,
+.btn {
+  background: var(--dark-surface2) !important;
+  color: var(--dark-text) !important;
+  border: 1px solid var(--dark-border) !important;
+}
+
+.button:hover,
+button:hover,
+.btn:hover {
+  background: var(--dark-surface3) !important;
+}
+
+/* ── Inputs / Search ────────────────────────────────────── */
+
+input,
+select,
+textarea,
+.text-input,
+.search__input {
+  background: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+  border: 1px solid var(--dark-border) !important;
+}
+
+input::placeholder,
+.search__input::placeholder {
+  color: var(--dark-text-dim) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--dark-accent) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2) !important;
+}
+
+/* ── Dropdowns / Selects ────────────────────────────────── */
+
+.dropdown,
+.select__control,
+.popover__content {
+  background: var(--dark-surface) !important;
+  border: 1px solid var(--dark-border) !important;
+}
+
+.dropdown__item:hover {
+  background: var(--dark-surface2) !important;
+}
+
+/* ── Charts / Graphs ────────────────────────────────────── */
+
+.chart__title {
+  color: var(--dark-text) !important;
+}
+
+.chart {
+  color: var(--dark-text) !important;
+}
+
+/* Trend chart backgrounds */
+.trend-chart {
+  background: var(--dark-surface) !important;
+}
+
+/* ── Status Colors (keep vibrant on dark) ───────────────── */
+
+.status_passed,
+.label_status_passed,
+.text_status_passed {
+  color: var(--dark-passed) !important;
+}
+
+.status_failed,
+.label_status_failed,
+.text_status_failed {
+  color: var(--dark-failed) !important;
+}
+
+.status_broken,
+.label_status_broken,
+.text_status_broken {
+  color: var(--dark-broken) !important;
+}
+
+.status_skipped,
+.label_status_skipped,
+.text_status_skipped {
+  color: var(--dark-skipped) !important;
+}
+
+.status_unknown,
+.label_status_unknown {
+  color: var(--dark-unknown) !important;
+}
+
+/* ── SVG Trend Chart Text ───────────────────────────────── */
+
+.ct-label {
+  color: var(--dark-text-muted) !important;
+  fill: var(--dark-text-muted) !important;
+}
+
+.ct-grid {
+  stroke: var(--dark-border) !important;
+}
+
+/* ── Severity Icons ─────────────────────────────────────── */
+
+.severity-icon {
+  color: var(--dark-text-muted) !important;
+}
+
+/* ── Summary Widget ─────────────────────────────────────── */
+
+.summary__text,
+.summary__info {
+  color: var(--dark-text) !important;
+}
+
+.summary__count {
+  color: var(--dark-text) !important;
+}
+
+/* ── Duration / Time ────────────────────────────────────── */
+
+.duration__text {
+  color: var(--dark-text-muted) !important;
+}
+
+/* ── Environment Table ──────────────────────────────────── */
+
+.environment-table td,
+.environment-table th {
+  background: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+  border-color: var(--dark-border) !important;
+}
+
+/* ── Executor Widget ────────────────────────────────────── */
+
+.executor-icon__name,
+.executor__name {
+  color: var(--dark-text) !important;
+}
+
+.executor__url {
+  color: var(--dark-link) !important;
+}
+
+/* ── Categories Table ───────────────────────────────────── */
+
+.categories-table td,
+.categories-table th {
+  background: transparent !important;
+  color: var(--dark-text) !important;
+}
+
+/* ── Retry / Flaky Badge ────────────────────────────────── */
+
+.retry-badge,
+.flaky-badge {
+  background: var(--dark-surface2) !important;
+  color: var(--dark-text) !important;
+}
+
+/* ── Arrow / Expand icons ───────────────────────────────── */
+
+.arrow,
+.arrow svg {
+  color: var(--dark-text-muted) !important;
+  fill: var(--dark-text-muted) !important;
+}
+
+.arrow:hover,
+.arrow:hover svg {
+  color: var(--dark-text) !important;
+  fill: var(--dark-text) !important;
+}
+
+/* ── Test Result Overview (right panel) ─────────────────── */
+
+.test-result-overview,
+.testresult-description,
+.testresult {
+  background: var(--dark-bg) !important;
+  color: var(--dark-text) !important;
+}
+
+/* ── Code / Pre blocks ──────────────────────────────────── */
+
+pre,
+code,
+.language-gherkin,
+.attachment__content {
+  background: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+  border: 1px solid var(--dark-border) !important;
+}
+
+/* ── Modal / Overlay ────────────────────────────────────── */
+
+.modal,
+.modal__content {
+  background: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+  border: 1px solid var(--dark-border) !important;
+}
+
+.modal__header {
+  border-bottom: 1px solid var(--dark-border) !important;
+}
+
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ── Timeline ───────────────────────────────────────────── */
+
+.timeline__item {
+  color: var(--dark-text) !important;
+}
+
+.timeline__host {
+  border-bottom: 1px solid var(--dark-border) !important;
+}
+
+/* ── Graph page / Pie Chart ─────────────────────────────── */
+
+.graph__legend-text {
+  color: var(--dark-text) !important;
+}
+
+/* ── History ────────────────────────────────────────────── */
+
+.history__row {
+  border-bottom: 1px solid rgba(71, 85, 105, 0.3) !important;
+}
+
+.history__row:hover {
+  background: var(--dark-surface) !important;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dark-surface3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-text-dim);
+}
+
+/* ── Misc text overrides ────────────────────────────────── */
+
+h1, h2, h3, h4, h5, h6,
+.text,
+p,
+span,
+div,
+li {
+  color: inherit;
+}
+
+/* ── Selection color ────────────────────────────────────── */
+
+::selection {
+  background: rgba(96, 165, 250, 0.3) !important;
+  color: var(--dark-text) !important;
+}
+
+/* ── Splitter / Resizer ─────────────────────────────────── */
+
+.split-pane-divider,
+.resizer {
+  background: var(--dark-border) !important;
+}
+
+/* ── Print ──────────────────────────────────────────────── */
+
+@media print {
+  body,
+  .app,
+  .app__content {
+    background: white !important;
+    color: black !important;
+  }
+}

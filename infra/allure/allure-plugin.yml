@@ -1,0 +1,5 @@
+id: custom-logo
+name: Custom logo & dark theme
+description: Dark theme and branding for AgiBank QA reports
+cssFiles:
+  - styles.css

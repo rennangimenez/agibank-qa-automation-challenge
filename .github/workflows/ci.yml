@@ -113,6 +113,15 @@ jobs:
         if: always()
         run: allure generate api-tests/target/allure-results -o api-tests/target/allure-report --clean
 
+      - name: Apply dark theme to Allure Report
+        if: always()
+        run: |
+          REPORT_DIR="api-tests/target/allure-report"
+          PLUGIN_DIR="$REPORT_DIR/plugins/custom-logo-plugin/static"
+          mkdir -p "$PLUGIN_DIR"
+          cp infra/allure/styles.css "$PLUGIN_DIR/styles.css"
+          cp infra/allure/allure-plugin.yml "$REPORT_DIR/plugins/custom-logo-plugin/allure-plugin.yml"
+
       - name: Deploy API Report
         if: always()
         run: rsync -avz --delete api-tests/target/allure-report/ /srv/apps/agibank-challenge-reports/api/
@@ -214,6 +223,15 @@ jobs:
       - name: Generate Allure Report
         if: always()
         run: allure generate web-tests/target/allure-results -o web-tests/target/allure-report --clean
+
+      - name: Apply dark theme to Allure Report
+        if: always()
+        run: |
+          REPORT_DIR="web-tests/target/allure-report"
+          PLUGIN_DIR="$REPORT_DIR/plugins/custom-logo-plugin/static"
+          mkdir -p "$PLUGIN_DIR"
+          cp infra/allure/styles.css "$PLUGIN_DIR/styles.css"
+          cp infra/allure/allure-plugin.yml "$REPORT_DIR/plugins/custom-logo-plugin/allure-plugin.yml"
 
       - name: Deploy Web Report
         if: always()
