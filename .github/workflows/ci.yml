@@ -63,6 +63,52 @@ jobs:
       - name: Run API Tests
         run: ./mvnw clean test -pl api-tests
 
+      - name: Generate Allure environment.properties
+        if: always()
+        run: |
+          RESULTS_DIR="api-tests/target/allure-results"
+          mkdir -p "$RESULTS_DIR"
+          cat > "$RESULTS_DIR/environment.properties" <<EOF
+          Java.Version=17
+          Test.Type=API
+          Framework=RestAssured 5.4.0
+          Base.URL=https://dog.ceo/api
+          Branch=${{ github.ref_name }}
+          Commit=${{ github.sha }}
+          Execution.Date=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          Runner=${{ runner.name }}
+          Trigger=${{ github.event_name }}
+          EOF
+          sed -i 's/^[[:space:]]*//' "$RESULTS_DIR/environment.properties"
+
+      - name: Generate Allure executor.json
+        if: always()
+        run: |
+          RESULTS_DIR="api-tests/target/allure-results"
+          cat > "$RESULTS_DIR/executor.json" <<EOF
+          {
+            "name": "GitHub Actions",
+            "type": "github",
+            "url": "https://github.com/${{ github.repository }}",
+            "buildOrder": ${{ github.run_number }},
+            "buildName": "CI #${{ github.run_number }}",
+            "buildUrl": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+            "reportUrl": "https://rennangimenez.com/agibank-challenge/api/"
+          }
+          EOF
+
+      - name: Restore Allure history
+        if: always()
+        run: |
+          PREV_HISTORY="/srv/apps/agibank-challenge-reports/api/history"
+          RESULTS_DIR="api-tests/target/allure-results"
+          if [ -d "$PREV_HISTORY" ]; then
+            echo "Restoring Allure history from previous report..."
+            cp -r "$PREV_HISTORY" "$RESULTS_DIR/history"
+          else
+            echo "No previous history found, skipping."
+          fi
+
       - name: Generate Allure Report
         if: always()
         run: allure generate api-tests/target/allure-results -o api-tests/target/allure-report --clean
@@ -116,6 +162,54 @@ jobs:
 
       - name: Run Web Tests
         run: ./mvnw clean test -pl web-tests
+
+      - name: Generate Allure environment.properties
+        if: always()
+        run: |
+          RESULTS_DIR="web-tests/target/allure-results"
+          mkdir -p "$RESULTS_DIR"
+          cat > "$RESULTS_DIR/environment.properties" <<EOF
+          Java.Version=17
+          Test.Type=Web
+          Framework=Playwright 1.44.0
+          Browser=Chromium (headless)
+          Viewport=1920x1080
+          Base.URL=https://blogdoagi.com.br
+          Branch=${{ github.ref_name }}
+          Commit=${{ github.sha }}
+          Execution.Date=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          Runner=${{ runner.name }}
+          Trigger=${{ github.event_name }}
+          EOF
+          sed -i 's/^[[:space:]]*//' "$RESULTS_DIR/environment.properties"
+
+      - name: Generate Allure executor.json
+        if: always()
+        run: |
+          RESULTS_DIR="web-tests/target/allure-results"
+          cat > "$RESULTS_DIR/executor.json" <<EOF
+          {
+            "name": "GitHub Actions",
+            "type": "github",
+            "url": "https://github.com/${{ github.repository }}",
+            "buildOrder": ${{ github.run_number }},
+            "buildName": "CI #${{ github.run_number }}",
+            "buildUrl": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+            "reportUrl": "https://rennangimenez.com/agibank-challenge/web/"
+          }
+          EOF
+
+      - name: Restore Allure history
+        if: always()
+        run: |
+          PREV_HISTORY="/srv/apps/agibank-challenge-reports/web/history"
+          RESULTS_DIR="web-tests/target/allure-results"
+          if [ -d "$PREV_HISTORY" ]; then
+            echo "Restoring Allure history from previous report..."
+            cp -r "$PREV_HISTORY" "$RESULTS_DIR/history"
+          else
+            echo "No previous history found, skipping."
+          fi
 
       - name: Generate Allure Report
         if: always()

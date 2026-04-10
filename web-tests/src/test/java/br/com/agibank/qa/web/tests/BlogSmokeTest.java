@@ -8,8 +8,11 @@ import br.com.agibank.qa.web.pages.BlogHomePage;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
+import io.qameta.allure.Link;
+import io.qameta.allure.Owner;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +21,8 @@ import org.junit.jupiter.api.Test;
 
 @Epic("Blog do Agi")
 @Feature("Smoke Tests")
+@Owner("rennan")
+@Link(name = "Blog do Agi", url = "https://blogdoagi.com.br")
 class BlogSmokeTest extends BaseTest {
 
   private BlogHomePage homePage;
@@ -31,6 +36,7 @@ class BlogSmokeTest extends BaseTest {
   @DisplayName("Home page loads with HTTP 200")
   @Description("Navigating to the blog home page should return a successful response")
   @Severity(SeverityLevel.BLOCKER)
+  @Story("Page Load")
   void homePageLoadsSuccessfully() {
     // Act
     homePage.navigate();
@@ -51,6 +57,7 @@ class BlogSmokeTest extends BaseTest {
   @DisplayName("Main navigation is visible")
   @Description("The primary navigation menu should be rendered on the home page")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("Page Structure")
   void mainNavigationIsVisible() {
     // Act
     homePage.navigate();
@@ -64,6 +71,7 @@ class BlogSmokeTest extends BaseTest {
   @DisplayName("Logo is present on the page")
   @Description("The blog logo/brand image should be visible in the header")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Page Structure")
   void logoIsPresent() {
     // Act
     homePage.navigate();
@@ -78,6 +86,7 @@ class BlogSmokeTest extends BaseTest {
   @DisplayName("Footer is present on the page")
   @Description("The page footer should be rendered with visible content")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Page Structure")
   void footerIsPresent() {
     // Act
     homePage.navigate();
@@ -91,6 +100,7 @@ class BlogSmokeTest extends BaseTest {
   @DisplayName("Page contains article content")
   @Description("The home page should display at least one article/post")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("Content")
   void pageContainsArticles() {
     // Act
     homePage.navigate();
@@ -105,6 +115,7 @@ class BlogSmokeTest extends BaseTest {
   @Description(
       "The home page should load without critical JS runtime errors (resource 404s are excluded)")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Page Load")
   void noCriticalJsErrorsOnLoad() {
     // Arrange
     List<String> jsErrors = new ArrayList<>();

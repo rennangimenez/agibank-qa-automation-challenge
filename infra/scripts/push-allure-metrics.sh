@@ -41,17 +41,24 @@ print(s['total'], s['passed'], s['failed'], s['broken'], s['skipped'], dur)
 ")
 
 PASS_RATE=0
+AVG_DURATION=0
 if [ "$TOTAL" -gt 0 ]; then
   PASS_RATE=$(python3 -c "print(round($PASSED / $TOTAL * 100, 2))")
+  AVG_DURATION=$(python3 -c "print(round($DURATION / $TOTAL, 2))")
 fi
 
-SUITE_LINE="test_results,test_type=${TEST_TYPE},branch=${BRANCH},commit=${COMMIT_SHA} total=${TOTAL}i,passed=${PASSED}i,failed=${FAILED}i,broken=${BROKEN}i,skipped=${SKIPPED}i,duration=${DURATION}i,pass_rate=${PASS_RATE} ${TIMESTAMP}"
+SUITE_LINE="test_results,test_type=${TEST_TYPE},branch=${BRANCH},commit=${COMMIT_SHA} total=${TOTAL}i,passed=${PASSED}i,failed=${FAILED}i,broken=${BROKEN}i,skipped=${SKIPPED}i,duration=${DURATION}i,pass_rate=${PASS_RATE},avg_test_duration=${AVG_DURATION} ${TIMESTAMP}"
 
 echo "=== Allure Metrics: ${TEST_TYPE} ==="
 echo "  Results: total=$TOTAL passed=$PASSED failed=$FAILED broken=$BROKEN skipped=$SKIPPED"
-echo "  Pass Rate: ${PASS_RATE}%  Duration: ${DURATION}ms"
+echo "  Pass Rate: ${PASS_RATE}%  Duration: ${DURATION}ms  Avg/Test: ${AVG_DURATION}ms"
 
 LINES="$SUITE_LINE"
+
+# Cumulative execution counter (each run adds 1 run + N tests for historical totals)
+CUMULATIVE_LINE="test_executions_cumulative,test_type=${TEST_TYPE},branch=${BRANCH} total_runs=1i,total_tests=${TOTAL}i,total_passed=${PASSED}i,total_failed=${FAILED}i ${TIMESTAMP}"
+LINES="${LINES}
+${CUMULATIVE_LINE}"
 
 CASES_FILE="$REPORT_DIR/widgets/cases-trend.json"
 if [ -f "$CASES_FILE" ]; then
@@ -119,6 +126,41 @@ except: pass
     LINES="${LINES}
 ${line}"
   done
+fi
+
+# Severity breakdown: parse individual test cases for per-severity metrics
+DATA_DIR="$REPORT_DIR/data/test-cases"
+if [ -d "$DATA_DIR" ]; then
+  SEVERITY_LINES=$(python3 -c "
+import json, os, sys
+data_dir = '$DATA_DIR'
+severity_stats = {}
+try:
+    for fname in os.listdir(data_dir):
+        if not fname.endswith('.json'):
+            continue
+        fpath = os.path.join(data_dir, fname)
+        with open(fpath) as f:
+            tc = json.load(f)
+        sev = (tc.get('severity') or tc.get('extra', {}).get('severity') or 'normal').lower()
+        status = (tc.get('status') or '').lower()
+        if sev not in severity_stats:
+            severity_stats[sev] = {'total': 0, 'passed': 0, 'failed': 0, 'broken': 0, 'skipped': 0}
+        severity_stats[sev]['total'] += 1
+        if status in severity_stats[sev]:
+            severity_stats[sev][status] += 1
+    for sev, s in severity_stats.items():
+        pr = round(s['passed']/s['total']*100, 2) if s['total'] > 0 else 0
+        print(f'test_severity,test_type=${TEST_TYPE},severity={sev},branch=${BRANCH} total={s[\"total\"]}i,passed={s[\"passed\"]}i,failed={s[\"failed\"]}i,broken={s[\"broken\"]}i,skipped={s[\"skipped\"]}i,pass_rate={pr} ${TIMESTAMP}')
+except Exception as e:
+    print(f'# severity parse error: {e}', file=sys.stderr)
+" 2>/dev/null || echo "")
+
+  if [ -n "$SEVERITY_LINES" ]; then
+    LINES="${LINES}
+${SEVERITY_LINES}"
+    echo "  Severity breakdown collected."
+  fi
 fi
 
 echo ""

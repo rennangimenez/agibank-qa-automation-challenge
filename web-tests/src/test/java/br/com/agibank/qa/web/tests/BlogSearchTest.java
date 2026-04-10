@@ -9,14 +9,19 @@ import br.com.agibank.qa.web.pages.SearchResultsPage;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
+import io.qameta.allure.Link;
+import io.qameta.allure.Owner;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @Epic("Blog do Agi")
 @Feature("Search")
+@Owner("rennan")
+@Link(name = "Blog do Agi", url = "https://blogdoagi.com.br")
 class BlogSearchTest extends BaseTest {
 
   private BlogHomePage homePage;
@@ -30,6 +35,7 @@ class BlogSearchTest extends BaseTest {
   @DisplayName("Search with valid term returns results")
   @Description("Searching for 'empréstimo' should return articles with titles and links")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("Valid Search")
   void searchWithValidTermReturnsResults() {
     // Arrange
     String searchTerm = SearchData.VALID_TERM;
@@ -60,6 +66,7 @@ class BlogSearchTest extends BaseTest {
   @Description(
       "Searching for a nonsense term should display zero articles and a no-results message")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Empty Search Results")
   void searchWithNonexistentTermShowsNoResults() {
     // Arrange
     String searchTerm = SearchData.NONEXISTENT_TERM;
@@ -84,6 +91,7 @@ class BlogSearchTest extends BaseTest {
   @DisplayName("Search components are present on the page")
   @Description("The search icon and form elements should exist in the page DOM")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Search UI Components")
   void searchComponentsArePresentOnPage() {
     // Act
     homePage.navigate();

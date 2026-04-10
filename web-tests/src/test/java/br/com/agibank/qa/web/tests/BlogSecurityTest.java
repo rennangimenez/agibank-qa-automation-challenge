@@ -10,8 +10,11 @@ import br.com.agibank.qa.web.pages.SearchResultsPage;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
+import io.qameta.allure.Link;
+import io.qameta.allure.Owner;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +23,8 @@ import org.junit.jupiter.api.Test;
 
 @Epic("Blog do Agi")
 @Feature("Security")
+@Owner("rennan")
+@Link(name = "Blog do Agi", url = "https://blogdoagi.com.br")
 class BlogSecurityTest extends BaseTest {
 
   private BlogHomePage homePage;
@@ -33,6 +38,7 @@ class BlogSecurityTest extends BaseTest {
   @DisplayName("SQL injection in search field is safely handled")
   @Description("Submitting a SQL injection payload should not cause errors or expose data")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("SQL Injection")
   void sqlInjectionInSearchIsHandled() {
     // Arrange
     String payload = SearchData.SQL_INJECTION;
@@ -61,6 +67,7 @@ class BlogSecurityTest extends BaseTest {
           + "The search term may be reflected in the page source (HTML-encoded), "
           + "but the script must never actually execute.")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("XSS Prevention")
   void xssAttemptDoesNotExecuteScripts() {
     // Arrange
     String payload = SearchData.XSS_SCRIPT;
@@ -96,6 +103,7 @@ class BlogSecurityTest extends BaseTest {
           + "allowing injected elements (e.g., <h1>) to render in the page. "
           + "This is a stored/reflected HTML injection vulnerability.")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("HTML Injection")
   void htmlInjectionRendersInDom() {
     // Arrange
     String payload = SearchData.HTML_INJECTION;
@@ -120,6 +128,7 @@ class BlogSecurityTest extends BaseTest {
   @DisplayName("Extremely long search input does not crash the application")
   @Description("Submitting a 5000-character search term should be handled gracefully")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Input Boundary")
   void extremelyLongSearchInputIsHandled() {
     // Arrange
     String payload = SearchData.longInput();
@@ -139,6 +148,7 @@ class BlogSecurityTest extends BaseTest {
   @DisplayName("Search with special characters does not cause errors")
   @Description("Characters like <, >, &, \", ' should be properly encoded and handled")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Input Boundary")
   void specialCharactersInSearchAreHandled() {
     // Arrange
     String payload = SearchData.SPECIAL_CHARACTERS;

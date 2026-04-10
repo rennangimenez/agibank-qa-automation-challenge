@@ -10,8 +10,11 @@ import br.com.agibank.qa.api.fixtures.BreedData;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
+import io.qameta.allure.Link;
+import io.qameta.allure.Owner;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import io.restassured.response.Response;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,6 +23,8 @@ import org.junit.jupiter.api.Test;
 
 @Epic("Dog API")
 @Feature("Breed List")
+@Owner("rennan")
+@Link(name = "Dog API Docs", url = "https://dog.ceo/dog-api/")
 class BreedListTest {
 
   private static DogApiClient client;
@@ -33,6 +38,7 @@ class BreedListTest {
   @DisplayName("List all breeds returns 200 with success status")
   @Description("GET /breeds/list/all should return status 200 and status field 'success'")
   @Severity(SeverityLevel.BLOCKER)
+  @Story("List All Breeds")
   void listAllBreedsReturns200() {
     // Act
     Response response = client.listAllBreeds();
@@ -49,6 +55,7 @@ class BreedListTest {
   @DisplayName("Breed list contains known breeds")
   @Description("The breed list should contain well-known breeds like bulldog, labrador, and hound")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("List All Breeds")
   void breedListContainsKnownBreeds() {
     // Act
     Response response = client.listAllBreeds();
@@ -64,6 +71,7 @@ class BreedListTest {
   @DisplayName("Sub-breeds are returned as arrays")
   @Description("Each breed's sub-breeds should be a list (even if empty)")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Sub-Breeds Structure")
   void subBreedsAreArrays() {
     // Act
     Response response = client.listAllBreeds();
@@ -82,6 +90,7 @@ class BreedListTest {
   @DisplayName("Breed list response matches JSON schema")
   @Description("The response body should conform to the expected JSON schema")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("Contract Validation")
   void responseMatchesJsonSchema() {
     // Act
     Response response = client.listAllBreeds();

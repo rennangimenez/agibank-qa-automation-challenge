@@ -7,8 +7,11 @@ import br.com.agibank.qa.api.fixtures.BreedData;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
+import io.qameta.allure.Link;
+import io.qameta.allure.Owner;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import io.restassured.response.Response;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,6 +20,8 @@ import org.junit.jupiter.api.Test;
 
 @Epic("Dog API")
 @Feature("Breed Images")
+@Owner("rennan")
+@Link(name = "Dog API Docs", url = "https://dog.ceo/dog-api/")
 class BreedImagesTest {
 
   private static DogApiClient client;
@@ -30,6 +35,7 @@ class BreedImagesTest {
   @DisplayName("Get images for valid breed returns 200 with image URLs")
   @Description("GET /breed/hound/images should return a list of valid image URLs")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("Valid Breed Images")
   void getImagesForValidBreed() {
     // Arrange
     String breed = BreedData.VALID_BREED;
@@ -49,6 +55,7 @@ class BreedImagesTest {
   @DisplayName("Breed image URLs are valid and point to images.dog.ceo")
   @Description("All returned URLs should start with https://images.dog.ceo/breeds/")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Valid Breed Images")
   void imageUrlsAreValid() {
     // Arrange
     String breed = BreedData.VALID_BREED;
@@ -69,6 +76,7 @@ class BreedImagesTest {
   @DisplayName("Breed image URLs contain the breed name")
   @Description("Image URLs for 'hound' should contain 'hound' in the path")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Valid Breed Images")
   void imageUrlsContainBreedName() {
     // Arrange
     String breed = BreedData.VALID_BREED;
@@ -85,6 +93,7 @@ class BreedImagesTest {
   @DisplayName("Get images for invalid breed returns 404")
   @Description("GET /breed/invalidbreed999/images should return status 404 with error message")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("Invalid Breed Handling")
   void getImagesForInvalidBreedReturns404() {
     // Arrange
     String breed = BreedData.INVALID_BREED;

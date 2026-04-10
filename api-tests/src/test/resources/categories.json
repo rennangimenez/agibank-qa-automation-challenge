@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Product Defects",
+    "description": "Assertion failures indicating a real API bug",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*expected.*but.*|.*should.*|.*assert.*"
+  },
+  {
+    "name": "Schema Validation Failures",
+    "description": "Response body does not match the expected JSON schema",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*doesn't match.*schema.*|.*JSON schema.*|.*matchesJsonSchema.*"
+  },
+  {
+    "name": "Test Defects",
+    "description": "Errors in test code itself (NPE, class cast, etc.)",
+    "matchedStatuses": ["broken"],
+    "messageRegex": ".*NullPointerException.*|.*ClassCastException.*|.*IndexOutOfBounds.*"
+  },
+  {
+    "name": "Infrastructure / Network Issues",
+    "description": "Connection timeouts, DNS failures, server errors",
+    "matchedStatuses": ["broken"],
+    "messageRegex": ".*Connection refused.*|.*UnknownHost.*|.*SocketTimeout.*|.*ConnectException.*"
+  },
+  {
+    "name": "Timeout Errors",
+    "description": "Requests that exceeded the configured timeout",
+    "matchedStatuses": ["broken"],
+    "messageRegex": ".*timed out.*|.*SocketTimeoutException.*|.*Read timed out.*"
+  },
+  {
+    "name": "Skipped / Disabled",
+    "description": "Tests that were intentionally skipped or disabled",
+    "matchedStatuses": ["skipped"]
+  }
+]

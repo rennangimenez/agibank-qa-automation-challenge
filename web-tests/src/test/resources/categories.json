@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Product Defects",
+    "description": "Assertion failures indicating a real product bug",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*expected.*but.*|.*should.*|.*assert.*"
+  },
+  {
+    "name": "Element Not Found",
+    "description": "Page elements could not be located (possible UI change or flaky locator)",
+    "matchedStatuses": ["broken"],
+    "messageRegex": ".*Timeout.*waiting.*selector.*|.*strict mode violation.*|.*locator resolved.*"
+  },
+  {
+    "name": "Test Defects",
+    "description": "Errors in test code itself (NPE, class cast, etc.)",
+    "matchedStatuses": ["broken"],
+    "messageRegex": ".*NullPointerException.*|.*ClassCastException.*|.*IndexOutOfBounds.*"
+  },
+  {
+    "name": "Navigation / Network Issues",
+    "description": "Page load failures, DNS or connection errors",
+    "matchedStatuses": ["broken"],
+    "messageRegex": ".*net::ERR_.*|.*Navigation failed.*|.*Connection refused.*|.*UnknownHost.*|.*ERR_NAME_NOT_RESOLVED.*"
+  },
+  {
+    "name": "Timeout Errors",
+    "description": "Operations that exceeded the configured timeout",
+    "matchedStatuses": ["broken"],
+    "messageRegex": ".*Timeout \\d+ms exceeded.*|.*exceeded.*timeout.*"
+  },
+  {
+    "name": "Skipped / Disabled",
+    "description": "Tests that were intentionally skipped or disabled",
+    "matchedStatuses": ["skipped"]
+  }
+]

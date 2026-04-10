@@ -7,8 +7,11 @@ import br.com.agibank.qa.api.fixtures.SecurityPayloads;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
+import io.qameta.allure.Link;
+import io.qameta.allure.Owner;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +19,8 @@ import org.junit.jupiter.api.Test;
 
 @Epic("Dog API")
 @Feature("Security")
+@Owner("rennan")
+@Link(name = "Dog API Docs", url = "https://dog.ceo/dog-api/")
 class SecurityTest {
 
   private static DogApiClient client;
@@ -29,6 +34,7 @@ class SecurityTest {
   @DisplayName("SQL injection in breed parameter returns error without exposing database info")
   @Description("Passing SQL payload as breed name should return 404 without database error traces")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("SQL Injection")
   void sqlInjectionInBreedParam() {
     // Arrange
     String payload = SecurityPayloads.SQL_INJECTION;
@@ -57,6 +63,7 @@ class SecurityTest {
   @DisplayName("Path traversal attempt in breed parameter is safely handled")
   @Description("Using ../ sequences should not expose file system paths or server internals")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("Path Traversal")
   void pathTraversalInBreedParam() {
     // Arrange
     String payload = SecurityPayloads.PATH_TRAVERSAL;
@@ -88,6 +95,7 @@ class SecurityTest {
           + "This is a known information disclosure vulnerability that should be mitigated by "
           + "removing or suppressing the header in the server configuration.")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Information Disclosure")
   void serverInfoExposedInHeaders() {
     // Act
     Response response = client.listAllBreeds();
@@ -107,6 +115,7 @@ class SecurityTest {
   @DisplayName("XSS payload in breed parameter is not reflected in response")
   @Description("Script tags in the breed parameter should not be echoed back in the response body")
   @Severity(SeverityLevel.CRITICAL)
+  @Story("XSS Prevention")
   void xssPayloadInBreedParam() {
     // Arrange
     String payload = SecurityPayloads.XSS_SCRIPT;
@@ -127,6 +136,7 @@ class SecurityTest {
   @DisplayName("Malicious Content-Type header is rejected or handled safely")
   @Description("Sending requests with unexpected Content-Type should not cause server errors")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Malicious Headers")
   void maliciousContentTypeIsHandled() {
     // Arrange
     String maliciousType = SecurityPayloads.MALICIOUS_CONTENT_TYPE;
@@ -144,6 +154,7 @@ class SecurityTest {
   @DisplayName("Oversized request header does not crash the server")
   @Description("Sending an extremely long header value should be rejected gracefully")
   @Severity(SeverityLevel.NORMAL)
+  @Story("Malicious Headers")
   void oversizedHeaderIsHandled() {
     // Arrange
     String headerValue = SecurityPayloads.oversizedHeaderValue();
