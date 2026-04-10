@@ -3,7 +3,7 @@
 **Projeto:** AgiBank QA Automation Challenge
 **Autor:** Rennan Gimenez
 **Data:** 10/04/2026
-**Versão:** 2.1
+**Versão:** 3.0
 
 ---
 
@@ -11,7 +11,7 @@
 
 Documentar os resultados dos testes de performance executados contra a aplicação **BlazeDemo** (https://blazedemo.com), avaliando o comportamento do sistema sob **carga sustentada** e **picos de tráfego**.
 
-Os testes foram executados na **VPS de produção** via GitHub Actions (self-hosted runner) com monitoramento em tempo real via **Grafana + InfluxDB**.
+Os testes são executados na **VPS de produção** via GitHub Actions (self-hosted runner) com monitoramento em tempo real via **Grafana + InfluxDB**. A pipeline roda ambos os testes (carga e pico) sequencialmente, com reports individuais e métricas separadas por tipo no Grafana.
 
 ---
 
@@ -176,49 +176,86 @@ Cada iteração executa o fluxo completo de compra de passagens:
 
 ### 8.1 Dashboards Grafana
 
-| Dashboard                   | Métricas Capturadas                                                                      | URL                                |
-| :-------------------------- | :--------------------------------------------------------------------------------------- | :--------------------------------- |
-| ✈️ **Performance (JMeter)** | Latência (avg/p90/p95/p99), throughput, error rate, active threads, errors por transação | https://rennangimenez.com/grafana/ |
-| 🔄 **Pipeline Health**      | Duração e status do pipeline, feedback time                                              | https://rennangimenez.com/grafana/ |
-| 📊 **Quality Overview**     | Contexto dos testes funcionais para correlação                                           | https://rennangimenez.com/grafana/ |
+| Dashboard                   | Métricas Capturadas                                                                          | URL                                                   |
+| :-------------------------- | :------------------------------------------------------------------------------------------- | :---------------------------------------------------- |
+| ✈️ **Performance (JMeter)** | Latência (avg/p90/p95/p99), throughput, error rate, active threads, comparação load vs spike | https://rennangimenez.com/grafana/d/perf-jmeter/      |
+| 🔄 **Pipeline Health**      | Duração e status do pipeline, feedback time                                                  | https://rennangimenez.com/grafana/d/pipeline-health/  |
+| 📊 **Quality Overview**     | Contexto dos testes funcionais para correlação                                               | https://rennangimenez.com/grafana/d/quality-overview/ |
 
-### 8.2 Infraestrutura de Métricas
+### 8.2 Separação de Métricas Load vs Spike
+
+Os testes enviam métricas com tags distintas para o InfluxDB:
+
+- **Load Test:** `application=blazedemo-load`
+- **Spike Test:** `application=blazedemo-spike`
+
+Isso permite filtrar e comparar os resultados no Grafana com a variável `$application` (multi-select com opção "All").
+
+### 8.3 Infraestrutura de Métricas
 
 ```
-JMeter → InfluxDB Backend Listener → InfluxDB (db: jmeter)
-                                          ↓
-                                       Grafana → Performance Dashboard
-                                                   ├── Latência (avg/p90/p95/p99)
-                                                   ├── Throughput (req/s)
-                                                   ├── Error Rate (%)
-                                                   ├── Active Threads
-                                                   └── Errors por Transação
+JMeter (blazedemo-load)  → InfluxDB Backend Listener → InfluxDB (db: jmeter)
+JMeter (blazedemo-spike) → InfluxDB Backend Listener ↗          ↓
+                                                              Grafana
+                                                                ├── KPIs (Avg RT, p90, p95, p99, Throughput, Error Rate)
+                                                                ├── Comparativo Load vs Spike (RT + Throughput)
+                                                                ├── Response Times por Percentil
+                                                                ├── Response Time por Transação
+                                                                ├── Throughput, Requests & Errors
+                                                                ├── Virtual Users / Active Threads
+                                                                └── Error Rate + Errors por Transação
 ```
 
 ---
 
 ## 📎 9. Evidências e Links
 
-| Evidência             | Tipo                            | URL                                                                      |
-| :-------------------- | :------------------------------ | :----------------------------------------------------------------------- |
-| 📊 JMeter HTML Report | Relatório completo com gráficos | https://rennangimenez.com/agibank-challenge/performance/                 |
-| 📈 Grafana Dashboards | Métricas tempo real + histórico | https://rennangimenez.com/grafana/                                       |
-| 🔄 GitHub Actions Run | Log de execução do pipeline     | https://github.com/rennangimenez/agibank-qa-automation-challenge/actions |
+| Evidência              | Tipo                            | URL                                                                      |
+| :--------------------- | :------------------------------ | :----------------------------------------------------------------------- |
+| 📊 Performance Index   | Página com links para ambos     | https://rennangimenez.com/agibank-challenge/performance/                 |
+| ⚡ Load Test Report    | Report custom HTML com gráficos | https://rennangimenez.com/agibank-challenge/performance/load/            |
+| 📈 Spike Test Report   | Report custom HTML com gráficos | https://rennangimenez.com/agibank-challenge/performance/spike/           |
+| 📈 Grafana Performance | Métricas tempo real + histórico | https://rennangimenez.com/grafana/d/perf-jmeter/                         |
+| 🔄 GitHub Actions      | Log de execução do pipeline     | https://github.com/rennangimenez/agibank-qa-automation-challenge/actions |
 
 ---
 
-## 📌 10. Conclusão
+## 📌 10. Pipeline de Performance
 
-Os testes de performance foram implementados com **2 cenários distintos** (carga sustentada e pico) integrados com um stack de observabilidade completo.
+A pipeline de performance é composta por **4 jobs** sequenciais:
 
-| Achado                     | Status                        |
-| :------------------------- | :---------------------------- |
-| ✅ Spike test com 0% erro  | Resiliência confirmada        |
-| ⚠️ Load test com ~5% erro  | Limitação da app demo         |
-| ⚠️ Response times > target | Baseline documentado          |
-| ✅ Métricas tempo real     | Grafana + InfluxDB funcionais |
-| ✅ CI/CD automatizado      | Execução reproduzível na VPS  |
-| ✅ 4 transações testadas   | Fluxo completo de compra      |
-| ✅ Think times realistas   | Gaussian Random Timer         |
+```
+Setup Monitoring → ⚡ Load Test → 📈 Spike Test → 📊 Deploy Index
+```
 
-A execução programada (cron 00h BRT) garante monitoramento contínuo da performance, com métricas históricas disponíveis para análise de tendências no Grafana. Os targets definidos servem como baseline para comparações futuras, considerando as limitações inerentes de uma aplicação demo externa.
+| Job              | Função                                                        |
+| :--------------- | :------------------------------------------------------------ |
+| Setup Monitoring | Sobe InfluxDB/Grafana e aguarda health check                  |
+| ⚡ Load Test     | Executa load test, gera report custom, deploya em `/load/`    |
+| 📈 Spike Test    | Executa spike test, gera report custom, deploya em `/spike/`  |
+| 📊 Deploy Index  | Gera página index com status de ambos e links para os reports |
+
+**Dispatch manual:** opções `all` (ambos), `blazedemo-load-test` ou `blazedemo-spike-test`.
+
+**Cron:** roda ambos diariamente às 03:00 UTC.
+
+---
+
+## 📌 11. Conclusão
+
+Os testes de performance foram implementados com **2 cenários distintos** (carga sustentada e pico de tráfego) integrados com um stack completo de observabilidade e reports customizados.
+
+| Achado                              | Status                              |
+| :---------------------------------- | :---------------------------------- |
+| ✅ Spike test com 0% de erro        | Resiliência confirmada              |
+| ⚠️ Load test com ~5% de erro        | Limitação da app demo               |
+| ⚠️ Response times acima do target   | Baseline documentado                |
+| ✅ Métricas separadas load vs spike | Tags distintas no InfluxDB          |
+| ✅ Comparativo no Grafana           | Painel Load vs Spike lado a lado    |
+| ✅ Reports custom por tipo          | HTML individual para cada cenário   |
+| ✅ Pipeline com ambos os testes     | Jobs separados, execução sequencial |
+| ✅ CI/CD automatizado               | Cron diário + dispatch manual       |
+| ✅ 4 transações testadas            | Fluxo completo de compra            |
+| ✅ Think times realistas            | Gaussian Random Timer               |
+
+A execução programada (cron 03:00 UTC) garante monitoramento contínuo da performance, com métricas históricas disponíveis para análise de tendências no Grafana. As tags `blazedemo-load` e `blazedemo-spike` permitem comparar ambos os cenários lado a lado no dashboard.

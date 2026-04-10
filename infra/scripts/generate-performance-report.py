@@ -110,11 +110,11 @@ def verdict_emoji(error_rate, p90):
     if error_rate < 1 and p90 < 2000:
         return "✅", "Excelente", "#10b981"
     elif error_rate < 5 and p90 < 3000:
-        return "🟡", "Aceitável", "#f59e0b"
+        return "🟡", "Aceitavel", "#f59e0b"
     elif error_rate < 10 and p90 < 5000:
-        return "🟠", "Atenção", "#f97316"
+        return "🟠", "Requer Atencao", "#f97316"
     else:
-        return "🔴", "Crítico", "#ef4444"
+        return "🔴", "Critico", "#ef4444"
 
 def fmt_ms(ms):
     if ms < 1000:
@@ -449,10 +449,10 @@ def generate_html(metrics, per_label, time_labels, throughput_ts, avg_rt_ts, err
 
 <div class="header">
   <h1>✈️ Performance Report</h1>
-  <p class="subtitle">{test_name} — BlazeDemo Flight Purchase Flow</p>
+  <p class="subtitle">{test_name} — Fluxo de Compra BlazeDemo</p>
   <div class="meta">
     <span>📅 {now}</span>
-    <span>⏱️ Início: {start_time}</span>
+    <span>⏱️ Inicio: {start_time}</span>
     <span>🔧 JMeter 5.6.3</span>
     <span>🖥️ Self-hosted Runner (VPS)</span>
   </div>
@@ -463,7 +463,7 @@ def generate_html(metrics, per_label, time_labels, throughput_ts, avg_rt_ts, err
   <!-- Verdict -->
   <div class="verdict">
     <span class="verdict-emoji">{v_emoji}</span>
-    <span>Veredicto: <span style="color:{v_color}">{v_text}</span> — Error Rate: {metrics['error_rate']:.2f}% | p90: {fmt_ms(metrics['p90_rt'])} | Throughput: {metrics['throughput']:.1f} req/s</span>
+    <span>Resultado: <span style="color:{v_color}">{v_text}</span> — Taxa de Erro: {metrics['error_rate']:.2f}% | p90: {fmt_ms(metrics['p90_rt'])} | Throughput: {metrics['throughput']:.1f} req/s</span>
   </div>
 
   <!-- KPI Cards -->
@@ -471,7 +471,7 @@ def generate_html(metrics, per_label, time_labels, throughput_ts, avg_rt_ts, err
     <div class="card">
       <div class="icon">📦</div>
       <div class="value">{fmt_number(metrics['total'])}</div>
-      <div class="label">Total de Requisições</div>
+      <div class="label">Total de Requisicoes</div>
     </div>
     <div class="card green">
       <div class="icon">✅</div>
@@ -496,17 +496,17 @@ def generate_html(metrics, per_label, time_labels, throughput_ts, avg_rt_ts, err
     <div class="card">
       <div class="icon">⏱️</div>
       <div class="value">{fmt_ms(metrics['avg_rt'])}</div>
-      <div class="label">Tempo Médio de Resposta</div>
+      <div class="label">Tempo Medio de Resposta</div>
     </div>
     <div class="card yellow">
       <div class="icon">📊</div>
       <div class="value">{fmt_ms(metrics['p90_rt'])}</div>
-      <div class="label">p90 Response Time</div>
+      <div class="label">Tempo de Resposta p90</div>
     </div>
     <div class="card">
       <div class="icon">⏳</div>
       <div class="value">{metrics['duration_s']:.0f}s</div>
-      <div class="label">Duração Total</div>
+      <div class="label">Duracao Total</div>
     </div>
   </div>
 
@@ -526,18 +526,18 @@ def generate_html(metrics, per_label, time_labels, throughput_ts, avg_rt_ts, err
 
   <!-- Percentile Distribution -->
   <div class="section">
-    <h2>📊 Distribuição de Percentis (Response Time)</h2>
+    <h2>📊 Distribuicao de Percentis (Tempo de Resposta)</h2>
     <div style="max-width: 700px;">
       <div class="percentile-bar">
         <span class="label">Min</span>
         <div class="bar-bg"><div class="bar-fill" style="width:{max(5, metrics['min_rt']/metrics['max_rt']*100)}%;background:var(--green);">{fmt_ms(metrics['min_rt'])}</div></div>
       </div>
       <div class="percentile-bar">
-        <span class="label">Mediana</span>
+        <span class="label">Med.</span>
         <div class="bar-bg"><div class="bar-fill" style="width:{max(10, metrics['median_rt']/metrics['max_rt']*100)}%;background:var(--cyan);">{fmt_ms(metrics['median_rt'])}</div></div>
       </div>
       <div class="percentile-bar">
-        <span class="label">Média</span>
+        <span class="label">Media</span>
         <div class="bar-bg"><div class="bar-fill" style="width:{max(10, metrics['avg_rt']/metrics['max_rt']*100)}%;background:var(--accent);">{fmt_ms(metrics['avg_rt'])}</div></div>
       </div>
       <div class="percentile-bar">
@@ -562,40 +562,40 @@ def generate_html(metrics, per_label, time_labels, throughput_ts, avg_rt_ts, err
   <!-- Charts -->
   <div class="charts-grid">
     <div class="chart-card">
-      <h3>📈 Throughput ao Longo do Tempo (req/s)</h3>
+      <h3>📈 Throughput ao Longo do Tempo</h3>
       <canvas id="throughputChart"></canvas>
     </div>
     <div class="chart-card">
-      <h3>⏱️ Response Time Médio ao Longo do Tempo</h3>
+      <h3>⏱️ Tempo de Resposta Medio</h3>
       <canvas id="rtChart"></canvas>
     </div>
     <div class="chart-card">
-      <h3>📊 Response Time por Transação (Avg vs p90 vs p95)</h3>
+      <h3>📊 Tempo de Resposta por Transacao (Media vs p90 vs p95)</h3>
       <canvas id="labelChart"></canvas>
     </div>
     <div class="chart-card">
-      <h3>📉 Taxa de Erro ao Longo do Tempo (%)</h3>
+      <h3>📉 Taxa de Erro ao Longo do Tempo</h3>
       <canvas id="errorChart"></canvas>
     </div>
   </div>
 
   <!-- Per-Transaction Table -->
   <div class="section">
-    <h2>📋 Resultados por Transação</h2>
+    <h2>📋 Resultados por Transacao</h2>
     <div style="overflow-x: auto;">
     <table>
       <thead>
         <tr>
-          <th>Transação</th>
-          <th class="text-right">Samples</th>
-          <th class="text-right">Avg</th>
+          <th>Transacao</th>
+          <th class="text-right">Amostras</th>
+          <th class="text-right">Media</th>
           <th class="text-right">Mediana</th>
           <th class="text-right">p90</th>
           <th class="text-right">p95</th>
           <th class="text-right">p99</th>
           <th class="text-right">Min</th>
           <th class="text-right">Max</th>
-          <th class="text-right">Error %</th>
+          <th class="text-right">Erro %</th>
           <th class="text-right">Req/s</th>
         </tr>
       </thead>
@@ -634,49 +634,49 @@ def generate_html(metrics, per_label, time_labels, throughput_ts, avg_rt_ts, err
       <div class="card">
         <div class="icon">📡</div>
         <div class="value">{fmt_ms(metrics['avg_latency'])}</div>
-        <div class="label">Latência Média</div>
+        <div class="label">Latencia Media</div>
       </div>
       <div class="card">
         <div class="icon">🔌</div>
         <div class="value">{fmt_ms(metrics['avg_connect'])}</div>
-        <div class="label">Tempo Médio de Conexão</div>
+        <div class="label">Tempo Medio de Conexao</div>
       </div>
       <div class="card">
         <div class="icon">📥</div>
         <div class="value">{fmt_bytes(metrics['total_bytes'])}</div>
-        <div class="label">Total de Dados Recebidos</div>
+        <div class="label">Total Recebido</div>
       </div>
       <div class="card">
         <div class="icon">📄</div>
         <div class="value">{fmt_bytes(metrics['avg_bytes'])}</div>
-        <div class="label">Tamanho Médio da Resposta</div>
+        <div class="label">Tamanho Medio da Resposta</div>
       </div>
     </div>
   </div>
 
   <!-- Test Config -->
   <div class="section">
-    <h2>⚙️ Configuração do Teste</h2>
+    <h2>⚙️ Configuracao do Teste</h2>
     <div class="config-grid">
       <div class="config-item">
         <span class="cfg-icon">🧵</span>
-        <div><div class="cfg-label">Threads (Usuários)</div><div class="cfg-value">150</div></div>
+        <div><div class="cfg-label">Usuarios Virtuais</div><div class="cfg-value">{"30 / 200 / 30 (3 fases)" if "spike" in test_name.lower() or "pico" in test_name.lower() else "150"}</div></div>
       </div>
       <div class="config-item">
         <span class="cfg-icon">⏱️</span>
-        <div><div class="cfg-label">Ramp-up</div><div class="cfg-value">60 segundos</div></div>
+        <div><div class="cfg-label">Ramp-up</div><div class="cfg-value">{"30s por fase" if "spike" in test_name.lower() or "pico" in test_name.lower() else "60 segundos"}</div></div>
       </div>
       <div class="config-item">
         <span class="cfg-icon">⏳</span>
-        <div><div class="cfg-label">Duração</div><div class="cfg-value">240 segundos</div></div>
+        <div><div class="cfg-label">Duracao</div><div class="cfg-value">{metrics['duration_s']:.0f} segundos</div></div>
       </div>
       <div class="config-item">
         <span class="cfg-icon">🌐</span>
-        <div><div class="cfg-label">Aplicação Alvo</div><div class="cfg-value">blazedemo.com</div></div>
+        <div><div class="cfg-label">Aplicacao Alvo</div><div class="cfg-value">blazedemo.com</div></div>
       </div>
       <div class="config-item">
         <span class="cfg-icon">⏰</span>
-        <div><div class="cfg-label">Think Time</div><div class="cfg-value">500ms ± 500ms</div></div>
+        <div><div class="cfg-label">Think Time</div><div class="cfg-value">500ms +/- 500ms</div></div>
       </div>
       <div class="config-item">
         <span class="cfg-icon">📊</span>
@@ -688,7 +688,7 @@ def generate_html(metrics, per_label, time_labels, throughput_ts, avg_rt_ts, err
 </div>
 
 <div class="footer">
-  <p>✈️ Relatório gerado automaticamente a partir dos resultados JMeter</p>
+  <p>✈️ Relatorio gerado automaticamente a partir dos resultados JMeter</p>
   <p>
     <a href="https://rennangimenez.com/grafana/">📈 Grafana Dashboards</a> ·
     <a href="https://github.com/rennangimenez/agibank-qa-automation-challenge">🔗 GitHub</a> ·
@@ -742,7 +742,7 @@ new Chart(document.getElementById('rtChart'), {{
   data: {{
     labels: timeLabels,
     datasets: [{{
-      label: 'Avg Response Time (ms)',
+      label: 'Tempo de Resposta Medio (ms)',
       data: avgRtData,
       borderColor: '#f59e0b',
       backgroundColor: '#f59e0b20',
@@ -766,7 +766,7 @@ new Chart(document.getElementById('labelChart'), {{
   data: {{
     labels: labelNames,
     datasets: [
-      {{ label: 'Avg', data: labelAvg, backgroundColor: '#3b82f6', borderRadius: 4 }},
+      {{ label: 'Media', data: labelAvg, backgroundColor: '#3b82f6', borderRadius: 4 }},
       {{ label: 'p90', data: labelP90, backgroundColor: '#f59e0b', borderRadius: 4 }},
       {{ label: 'p95', data: labelP95, backgroundColor: '#ef4444', borderRadius: 4 }}
     ]
@@ -785,7 +785,7 @@ new Chart(document.getElementById('errorChart'), {{
   data: {{
     labels: timeLabels,
     datasets: [{{
-      label: 'Error Rate (%)',
+      label: 'Taxa de Erro (%)',
       data: errorData,
       borderColor: '#ef4444',
       backgroundColor: '#ef444420',
