@@ -1,101 +1,282 @@
-# AgiBank QA Automation Challenge
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-17+-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 17+" />
+  <img src="https://img.shields.io/badge/Playwright-1.44-2EAD33?style=for-the-badge&logo=playwright&logoColor=white" alt="Playwright" />
+  <img src="https://img.shields.io/badge/RestAssured-5.4-4BAE4F?style=for-the-badge&logo=java&logoColor=white" alt="RestAssured" />
+  <img src="https://img.shields.io/badge/JMeter-5.6-D22128?style=for-the-badge&logo=apachejmeter&logoColor=white" alt="JMeter" />
+  <img src="https://img.shields.io/badge/Allure-2.25-FF6347?style=for-the-badge&logo=qameta&logoColor=white" alt="Allure" />
+  <img src="https://img.shields.io/badge/Grafana-Latest-F46800?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" />
+</p>
 
-[![CI](https://github.com/rennangimenez/agibank-qa-automation-challenge/actions/workflows/ci.yml/badge.svg)](https://github.com/rennangimenez/agibank-qa-automation-challenge/actions/workflows/ci.yml)
+<h1 align="center">🏦 AgiBank QA Automation Challenge</h1>
 
-End-to-end QA automation project covering **Web**, **API**, and **Performance** testing using Java 17, Playwright, RestAssured, and JMeter. Includes **security testing**, **observability** with Grafana, and a full CI/CD pipeline.
+<p align="center">
+  <strong>Projeto completo de automação de testes cobrindo Web, API e Performance</strong><br />
+  com testes de segurança ofensivos, observabilidade em tempo real e CI/CD automatizado.
+</p>
 
-**Live Reports:** [rennangimenez.com/agibank-challenge](https://rennangimenez.com/agibank-challenge/)
-**Grafana Dashboards:** [rennangimenez.com/grafana](https://rennangimenez.com/grafana/)
+<p align="center">
+  <a href="https://github.com/rennangimenez/agibank-qa-automation-challenge/actions/workflows/ci.yml">
+    <img src="https://github.com/rennangimenez/agibank-qa-automation-challenge/actions/workflows/ci.yml/badge.svg" alt="CI" />
+  </a>
+  <a href="https://rennangimenez.com/agibank-challenge/">
+    <img src="https://img.shields.io/badge/📊_Reports-Online-brightgreen?style=flat-square" alt="Reports" />
+  </a>
+  <a href="https://rennangimenez.com/grafana/">
+    <img src="https://img.shields.io/badge/📈_Grafana-Live-orange?style=flat-square" alt="Grafana" />
+  </a>
+</p>
 
 ---
 
-## Architecture
+## 🗂️ Índice
+
+- [Visão Geral](#-visão-geral)
+- [Links Rápidos](#-links-rápidos)
+- [Arquitetura](#-arquitetura)
+- [Stack Tecnológica](#-stack-tecnológica)
+- [Decisões de Design](#-decisões-de-design)
+- [Cobertura de Testes](#-cobertura-de-testes)
+- [Findings de Segurança](#-findings-de-segurança)
+- [Pré-requisitos](#-pré-requisitos)
+- [Setup](#-setup)
+- [Executando os Testes](#-executando-os-testes)
+- [Reports e Evidências](#-reports-e-evidências)
+- [Observabilidade](#-observabilidade)
+- [CI/CD](#-cicd)
+- [Qualidade de Código](#-qualidade-de-código)
+- [Documentação](#-documentação)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Autor](#-autor)
+
+---
+
+## 🔭 Visão Geral
+
+Este projeto é uma solução completa de automação de testes para o desafio técnico de **QA Senior** do AgiBank. Cobre **3 pilares** com foco em qualidade, segurança e observabilidade:
+
+|       Pilar        | Aplicação                               | O que testa                                                        |    Testes    |
+| :----------------: | :-------------------------------------- | :----------------------------------------------------------------- | :----------: |
+|     🌐 **Web**     | [Blog do Agi](https://blogdoagi.com.br) | Busca, smoke tests, segurança (XSS, SQL Injection, HTML Injection) |    **14**    |
+|     🐕 **API**     | [Dog API](https://dog.ceo/dog-api/)     | Endpoints, contrato JSON Schema, edge cases, segurança             |    **26**    |
+| ✈️ **Performance** | [BlazeDemo](https://blazedemo.com)      | Carga sustentada (150 threads) e spike (200 threads pico)          | **2 planos** |
+
+> **42 cenários automatizados** com execução programada 2x/dia, reports interativos e dashboards em tempo real.
+
+---
+
+## 🔗 Links Rápidos
+
+<table>
+  <tr>
+    <td align="center">🌐<br /><strong><a href="https://rennangimenez.com/agibank-challenge/web/">Allure Web</a></strong><br /><sub>Report interativo</sub></td>
+    <td align="center">🐕<br /><strong><a href="https://rennangimenez.com/agibank-challenge/api/">Allure API</a></strong><br /><sub>Report interativo</sub></td>
+    <td align="center">✈️<br /><strong><a href="https://rennangimenez.com/agibank-challenge/performance/">JMeter</a></strong><br /><sub>HTML Report</sub></td>
+    <td align="center">📈<br /><strong><a href="https://rennangimenez.com/grafana/">Grafana</a></strong><br /><sub>Dashboards live</sub></td>
+    <td align="center">🔄<br /><strong><a href="https://github.com/rennangimenez/agibank-qa-automation-challenge/actions">Actions</a></strong><br /><sub>CI/CD Pipeline</sub></td>
+  </tr>
+</table>
+
+---
+
+## 🏗️ Arquitetura
 
 ```
 agibank-qa-automation-challenge/
-├── web-tests/           Playwright Java — Blog do Agi (search, smoke, security)
-├── api-tests/           RestAssured — Dog API (CRUD, edge cases, security)
-├── performance-tests/   JMeter — BlazeDemo flight purchase (load + spike)
-├── infra/               Grafana + InfluxDB + Prometheus (observability)
-├── .github/workflows/   CI/CD pipelines
-├── docs/                Test plan, test report, performance report
-├── pom.xml              Parent POM (Maven multi-module)
-└── package.json         Dev tooling (Husky, Prettier)
+├── 🌐 web-tests/           Playwright Java — Blog do Agi (busca, smoke, segurança)
+├── 🐕 api-tests/           RestAssured — Dog API (CRUD, edge cases, segurança)
+├── ✈️ performance-tests/   JMeter — BlazeDemo (carga + spike)
+├── 📊 infra/               Grafana + InfluxDB + Prometheus (observabilidade)
+├── 🔄 .github/workflows/   CI/CD pipelines (self-hosted runner)
+├── 📝 docs/                Plano de testes, relatórios
+├── 📦 pom.xml              Parent POM (Maven multi-module)
+└── 🧹 package.json         Ferramentas dev (Husky, Prettier)
 ```
 
-### Tech Stack
+### Fluxo de Dados
 
-| Layer         | Technology                      | Purpose                               |
-| ------------- | ------------------------------- | ------------------------------------- |
-| Language      | Java 17                         | Core language                         |
-| Build         | Maven 3.9                       | Multi-module build with Maven Wrapper |
-| Test Runner   | JUnit 5                         | Unified test execution                |
-| Web           | Playwright Java                 | Browser automation with auto-waits    |
-| API           | RestAssured                     | HTTP client with fluent assertions    |
-| Performance   | JMeter 5.6                      | Load and spike testing                |
-| Reports       | Allure                          | Interactive HTML reports (Web + API)  |
-| Observability | Grafana + InfluxDB + Prometheus | Real-time dashboards and metrics      |
-| CI/CD         | GitHub Actions                  | Self-hosted runner on VPS             |
-| Code Quality  | Spotless + Husky + Prettier     | Formatting and pre-commit hooks       |
-
-### Design Decisions
-
-- **Playwright over Selenium**: Auto-waits reduce flakiness; modern API with better DX; built-in support for multiple browser contexts.
-- **RestAssured with Client Layer**: Separates HTTP logic from test assertions following SRP; `DogApiClient` encapsulates all API calls, making tests readable and maintainable.
-- **JSON Schema Validation**: Validates API contract structure beyond just status codes, catching breaking changes early.
-- **Maven Multi-Module**: Each test type is an independent module with its own dependencies, avoiding classpath conflicts while sharing common configuration through the parent POM.
-- **Grafana + InfluxDB**: JMeter sends real-time metrics via Backend Listener; CI pushes Allure results and pipeline metrics to InfluxDB, enabling 3 focused dashboards (Quality, Performance, Pipeline Health).
-- **Security-First Approach**: Security tests document real findings (HTML injection, info disclosure) as positive assertions, demonstrating vulnerability detection capability.
-
----
-
-## Test Coverage Summary
-
-**Total: 42 test scenarios** (14 Web + 26 API + 2 Performance plans)
-
-| Module              | Tests  | Categories                                                |
-| ------------------- | ------ | --------------------------------------------------------- |
-| Web - Search        | 3      | Functional                                                |
-| Web - Smoke         | 6      | Smoke                                                     |
-| Web - Security      | 5      | Security (SQL Injection, XSS, HTML Injection)             |
-| API - Breed List    | 4      | Functional + Contract                                     |
-| API - Breed Images  | 4      | Functional                                                |
-| API - Random Image  | 3      | Functional + Contract                                     |
-| API - Edge Cases    | 9      | Edge Cases + Functional                                   |
-| API - Security      | 6      | Security (SQL Injection, Path Traversal, Info Disclosure) |
-| Performance - Load  | 1 plan | Load testing (150 threads, 240s)                          |
-| Performance - Spike | 1 plan | Spike testing (3 phases, 200 threads peak)                |
-
-### Security Findings
-
-| ID      | Finding                                                        | Severity | Application |
-| ------- | -------------------------------------------------------------- | -------- | ----------- |
-| WEB-012 | HTML Injection renders as actual DOM element in search results | Critical | Blog do Agi |
-| API-023 | X-Powered-By header exposes PHP/8.3.29                         | Normal   | Dog API     |
+```
+                    ┌──────────────┐
+                    │ GitHub Push  │
+                    └──────┬───────┘
+                           │
+                    ┌──────▼───────┐
+                    │ GitHub Actions│
+                    │ (self-hosted) │
+                    └──────┬───────┘
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+       ┌──────▼──┐  ┌──────▼──┐  ┌──────▼──────┐
+       │API Tests│  │Web Tests│  │  Deploy      │
+       │RestAssur│  │Playwrig │  │  Monitoring  │
+       └────┬────┘  └────┬────┘  └──────┬──────┘
+            │            │              │
+       ┌────▼────────────▼────┐   ┌─────▼─────┐
+       │   Allure Reports     │   │  Grafana   │
+       │  (deploy via rsync)  │   │  InfluxDB  │
+       └──────────────────────┘   └───────────┘
+```
 
 ---
 
-## Prerequisites
+## 🛠️ Stack Tecnológica
 
-- **Java 17+** (JDK, not just JRE)
-- **Node.js 18+** (for dev tooling: Husky, Prettier)
-- **Git**
-
-Maven is handled automatically via the included Maven Wrapper (`mvnw`).
+|        Camada        | Tecnologia         | Versão | Para quê                            |
+| :------------------: | :----------------- | :----: | :---------------------------------- |
+|   💻 **Linguagem**   | Java               |   17   | Linguagem principal dos testes      |
+|     📦 **Build**     | Maven              | 3.9.6  | Multi-module com Maven Wrapper      |
+|  🧪 **Test Runner**  | JUnit 5            | 5.10.2 | Framework unificado de testes       |
+|      🌐 **Web**      | Playwright Java    | 1.44.0 | Automação browser com auto-waits    |
+|      🐕 **API**      | RestAssured        | 5.4.0  | HTTP client com assertions fluentes |
+|  ✈️ **Performance**  | JMeter             | 5.6.3  | Testes de carga e spike             |
+|   📊 **Reporting**   | Allure             | 2.25.0 | Reports interativos com evidências  |
+| 📈 **Observability** | Grafana + InfluxDB | Latest | Dashboards e métricas tempo real    |
+|     🔄 **CI/CD**     | GitHub Actions     |   —    | Self-hosted runner na VPS           |
+| 🧹 **Code Quality**  | Spotless + Husky   |   —    | Formatação e pre-commit hooks       |
 
 ---
 
-## Setup
+## 💡 Decisões de Design
+
+<details>
+<summary><strong>🎭 Por que Playwright e não Selenium?</strong></summary>
+
+- **Auto-waits** embutidos reduzem flakiness drasticamente
+- API moderna com melhor experiência de desenvolvimento
+- Suporte nativo a múltiplos contextos de browser
+- Tracing integrado para debug visual de falhas
+
+</details>
+
+<details>
+<summary><strong>🔌 Por que RestAssured com camada Client?</strong></summary>
+
+- Separa lógica HTTP das assertions seguindo SRP (Single Responsibility)
+- `DogApiClient` encapsula todas as chamadas, tornando testes legíveis
+- Facilita manutenção: mudança na API = mudança em 1 lugar
+
+</details>
+
+<details>
+<summary><strong>📄 Por que JSON Schema Validation?</strong></summary>
+
+- Valida a **estrutura** do contrato da API, não apenas status codes
+- Detecta breaking changes antes que impactem consumidores
+- Schemas versionados no repositório como fonte da verdade
+
+</details>
+
+<details>
+<summary><strong>📦 Por que Maven Multi-Module?</strong></summary>
+
+- Cada tipo de teste é um módulo independente com suas dependências
+- Evita conflitos de classpath entre Playwright, RestAssured e JMeter
+- Configurações comuns compartilhadas via Parent POM
+
+</details>
+
+<details>
+<summary><strong>📈 Por que Grafana + InfluxDB?</strong></summary>
+
+- JMeter envia métricas em tempo real via Backend Listener
+- CI envia resultados Allure e métricas de pipeline para InfluxDB
+- **3 dashboards especializados**: Quality, Performance e Pipeline Health
+- Métricas cumulativas e tendências históricas
+
+</details>
+
+<details>
+<summary><strong>🛡️ Por que testes de segurança documentam findings?</strong></summary>
+
+- Testes que encontram vulnerabilidades são escritos como assertions positivas
+- Documentam a **presença** da vulnerabilidade ao invés de falhar silenciosamente
+- Demonstram capacidade real de detecção de vulnerabilidades
+- Achados marcados com `⚠️ [ACHADO]` no Allure para visibilidade
+
+</details>
+
+---
+
+## 🧪 Cobertura de Testes
+
+**Total: 42 cenários** — 14 Web + 26 API + 2 planos de Performance
+
+### 🌐 Web Tests — Blog do Agi (14 testes)
+
+| Suite              | Testes | Cobertura                                                             |
+| :----------------- | :----: | :-------------------------------------------------------------------- |
+| 💨 **Smoke Tests** |   6    | Carregamento, navegação, logo, footer, artigos, JS errors             |
+| 🔍 **Busca**       |   3    | Busca válida, termo inexistente, componentes UI                       |
+| 🛡️ **Segurança**   |   5    | SQL Injection, XSS, HTML Injection, input longo, caracteres especiais |
+
+### 🐕 API Tests — Dog API (26 testes)
+
+| Suite                    | Testes | Cobertura                                                               |
+| :----------------------- | :----: | :---------------------------------------------------------------------- |
+| 📋 **Listagem de Raças** |   4    | GET all breeds, raças conhecidas, sub-raças, JSON Schema                |
+| 🖼️ **Imagens por Raça**  |   4    | Imagens válidas, URLs CDN, raça inválida 404                            |
+| 🎲 **Imagem Aleatória**  |   3    | Random image, extensão válida, JSON Schema                              |
+| ⚠️ **Casos Extremos**    |   9    | Chars especiais, unicode, nomes longos, contagens negativas, sub-raças  |
+| 🛡️ **Segurança**         |   6    | SQL Injection, Path Traversal, XSS, info disclosure, headers maliciosos |
+
+### ✈️ Performance Tests — BlazeDemo (2 planos)
+
+| Plano             | Config                                 | Fluxo                                     |
+| :---------------- | :------------------------------------- | :---------------------------------------- |
+| ⚡ **Load Test**  | 150 threads, ramp 60s, 240s sustentado | Home → Buscar voos → Escolher → Confirmar |
+| 📈 **Spike Test** | 30 → 200 → 30 threads (3 fases)        | Mesmo fluxo com burst de tráfego          |
+
+---
+
+## 🔐 Findings de Segurança
+
+> Vulnerabilidades reais encontradas e documentadas durante os testes.
+
+### ⚠️ WEB-012 — HTML Injection no Blog do Agi
+
+|                  |                                                                     |
+| :--------------- | :------------------------------------------------------------------ |
+| **Severidade**   | 🔴 Critical                                                         |
+| **Tipo**         | HTML Injection (Reflected)                                          |
+| **Vetor**        | Campo de busca → página de resultados                               |
+| **Payload**      | `<h1>Injected</h1>`                                                 |
+| **Impacto**      | Tag `<h1>` renderiza como elemento DOM real — potencial phishing    |
+| **Recomendação** | Aplicar `esc_html()` no output do search term no template WordPress |
+
+### ⚠️ API-023 — Information Disclosure na Dog API
+
+|                  |                                                     |
+| :--------------- | :-------------------------------------------------- |
+| **Severidade**   | 🟡 Normal                                           |
+| **Tipo**         | Information Disclosure                              |
+| **Header**       | `X-Powered-By: PHP/8.3.29`                          |
+| **Impacto**      | Expõe tecnologia e versão do backend para atacantes |
+| **Recomendação** | `expose_php = Off` no `php.ini`                     |
+
+---
+
+## 📋 Pré-requisitos
+
+| Requisito       | Versão   |          Obrigatório           |
+| :-------------- | :------- | :----------------------------: |
+| ☕ **Java JDK** | 17+      |               ✅               |
+| 📗 **Node.js**  | 18+      |     ✅ (Husky + Prettier)      |
+| 🔧 **Git**      | Qualquer |               ✅               |
+| 📦 **Maven**    | —        | ❌ (incluso via Maven Wrapper) |
+
+---
+
+## 🚀 Setup
 
 ```bash
-# Clone
+# 1️⃣ Clonar o repositório
 git clone https://github.com/rennangimenez/agibank-qa-automation-challenge.git
 cd agibank-qa-automation-challenge
 
-# Install dev tooling (Husky + Prettier)
+# 2️⃣ Instalar ferramentas de dev (Husky + Prettier)
 npm install
 
-# Install Playwright browsers (required for web tests)
+# 3️⃣ Instalar browsers do Playwright (necessário para testes web)
 ./mvnw exec:java -pl web-tests -e \
   -Dexec.mainClass=com.microsoft.playwright.CLI \
   -Dexec.args="install --with-deps chromium"
@@ -103,49 +284,44 @@ npm install
 
 ---
 
-## Running Tests
+## ▶️ Executando os Testes
 
-### API Tests (26 tests)
+### 🐕 API Tests (26 testes)
 
 ```bash
 ./mvnw clean test -pl api-tests
 ```
 
-Tests the [Dog API](https://dog.ceo/dog-api/documentation):
+Testa a [Dog API](https://dog.ceo/dog-api/documentation):
 
-- Breed list, images, and random image endpoints
-- JSON Schema contract validation
-- Edge cases: special characters, unicode, boundary values
-- Security: SQL injection, path traversal, XSS reflection, header analysis
+- 📋 Listagem de raças e sub-raças
+- 📄 Validação de contrato JSON Schema
+- ⚠️ Edge cases: caracteres especiais, unicode, limites
+- 🛡️ Segurança: SQL Injection, Path Traversal, XSS, headers
 
-### Web Tests (14 tests)
+### 🌐 Web Tests (14 testes)
 
 ```bash
 ./mvnw clean test -pl web-tests
 ```
 
-Tests the [Blog do Agi](https://blogdoagi.com.br/):
+Testa o [Blog do Agi](https://blogdoagi.com.br):
 
-- Search with valid/invalid terms
-- Smoke tests (page load, navigation, articles, footer)
-- Security: SQL injection, XSS execution, HTML injection, long input handling
+- 💨 Smoke: carregamento, navegação, artigos, JS errors
+- 🔍 Busca: termos válidos/inválidos, componentes
+- 🛡️ Segurança: SQL Injection, XSS, HTML Injection, input longo
 
-### Performance Tests
+### ✈️ Performance Tests
 
 ```bash
-# Load test
+# ⚡ Load Test (150 threads, 240s)
 ./mvnw clean verify -pl performance-tests -Djmeter.test=blazedemo-load-test
 
-# Spike test
+# 📈 Spike Test (30 → 200 → 30 threads)
 ./mvnw clean verify -pl performance-tests -Djmeter.test=blazedemo-spike-test
 ```
 
-Tests the [BlazeDemo](https://www.blazedemo.com) flight purchase flow:
-
-- **Load Test**: Ramp to 150 threads over 60s, sustain for 240s, targeting 250 req/s
-- **Spike Test**: 3 phases -- warm-up (30 threads) -> spike (200 threads) -> cool-down (30 threads)
-
-### Run All (API + Web)
+### 🏃 Rodar Tudo (API + Web)
 
 ```bash
 ./mvnw clean test -pl api-tests,web-tests
@@ -153,169 +329,238 @@ Tests the [BlazeDemo](https://www.blazedemo.com) flight purchase flow:
 
 ---
 
-## Reports & Observability
+## 📊 Reports e Evidências
 
-### Live Reports
+### 🌍 Reports Online (atualizados a cada CI run)
 
-Reports are automatically deployed to the VPS on every CI run:
+| Report             | Link                                                                                                         | Formato           |
+| :----------------- | :----------------------------------------------------------------------------------------------------------- | :---------------- |
+| 🌐 **Web Tests**   | [rennangimenez.com/agibank-challenge/web/](https://rennangimenez.com/agibank-challenge/web/)                 | Allure interativo |
+| 🐕 **API Tests**   | [rennangimenez.com/agibank-challenge/api/](https://rennangimenez.com/agibank-challenge/api/)                 | Allure interativo |
+| ✈️ **Performance** | [rennangimenez.com/agibank-challenge/performance/](https://rennangimenez.com/agibank-challenge/performance/) | JMeter HTML       |
+| 📈 **Dashboards**  | [rennangimenez.com/grafana/](https://rennangimenez.com/grafana/)                                             | Grafana live      |
 
-| Report               | URL                                                                                                          |
-| -------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Web Tests (Allure)   | [rennangimenez.com/agibank-challenge/web/](https://rennangimenez.com/agibank-challenge/web/)                 |
-| API Tests (Allure)   | [rennangimenez.com/agibank-challenge/api/](https://rennangimenez.com/agibank-challenge/api/)                 |
-| Performance (JMeter) | [rennangimenez.com/agibank-challenge/performance/](https://rennangimenez.com/agibank-challenge/performance/) |
-| Grafana Dashboards   | [rennangimenez.com/grafana/](https://rennangimenez.com/grafana/)                                             |
+### 🎨 Features dos Reports Allure
 
-### Grafana Dashboards
+Os reports Allure foram enriquecidos com:
 
-| Dashboard                  | Purpose                                                                               |
-| -------------------------- | ------------------------------------------------------------------------------------- |
-| Quality Overview           | Web/API test results separated, pass rates, trends, flaky test tracking               |
-| Performance (JMeter)       | Real-time latency (avg/p90/p95/p99), throughput, error rate, per-transaction analysis |
-| Pipeline & Delivery Health | CI/CD success rate, job durations, feedback time, failure analysis                    |
+- 📸 **Screenshots automáticas** em todos os testes (sucesso e falha)
+- 🔗 **URL final e título da página** capturados como evidência
+- 🎬 **Playwright Traces** em falhas para debug visual passo-a-passo
+- 📂 **Categorias customizadas** (Defeito de Produto, Defeito de Teste, Timeout, etc.)
+- 🏷️ **Anotações ricas**: `@Epic`, `@Feature`, `@Story`, `@Owner`, `@Severity`, `@Link`
+- 🌍 **Environment info**: Java version, browser, OS, branch, commit, runner
+- 📈 **Trends históricos** com gráficos nativos de evolução
+- 😊 **Nomes amigáveis com emojis** em todas as suites e testes (PT-BR)
 
-### Local Reports
+### 🖥️ Reports Locais
 
 ```bash
-# Allure
+# Allure — abre no browser automaticamente
 ./mvnw allure:serve -pl api-tests
 ./mvnw allure:serve -pl web-tests
 
-# JMeter
-# Report generated at: performance-tests/target/jmeter/reports/
+# JMeter — HTML gerado em:
+# performance-tests/target/jmeter/reports/
 ```
 
 ---
 
-## Observability Stack
+## 📈 Observabilidade
 
-The project includes a full monitoring stack deployed on the VPS via Docker Compose:
+### Stack de Monitoramento
+
+```
+GitHub Actions → Testes → Allure/JMeter
+                              │
+            push-allure-metrics.sh ──→ InfluxDB ──→ Grafana
+            push-pipeline-metrics.sh ↗
+            JMeter Backend Listener ↗
+```
+
+### 📊 Dashboards Grafana
+
+| Dashboard               | Métricas                                                          | Fonte                                                         |
+| :---------------------- | :---------------------------------------------------------------- | :------------------------------------------------------------ |
+| 📊 **Quality Overview** | Pass rate Web/API, trends, severidade, métricas cumulativas       | `test_results`, `test_severity`, `test_executions_cumulative` |
+| ✈️ **Performance**      | Latência (avg/p90/p95/p99), throughput, error rate, por transação | `jmeter`                                                      |
+| 🔄 **Pipeline Health**  | Success rate CI/CD, duração por job, feedback time                | `pipeline_runs`                                               |
+
+### Infraestrutura
 
 ```
 infra/
-├── docker-compose.yml                Grafana + InfluxDB + Prometheus
-├── prometheus/prometheus.yml          Prometheus scrape config
-├── grafana/
-│   ├── provisioning/                  Auto-configured datasources and dashboard providers
+├── 🐳 docker-compose.yml                Grafana + InfluxDB + Prometheus
+├── 📡 prometheus/prometheus.yml          Config de scrape
+├── 📊 grafana/
+│   ├── provisioning/                     Datasources e providers auto-config
 │   └── dashboards/
-│       ├── quality-overview.json      Web/API test results, pass rates, flaky tracking
-│       ├── performance.json           JMeter latency, throughput, error analysis
-│       └── pipeline-health.json       CI/CD success rate, job durations, feedback time
-└── scripts/
-    ├── push-allure-metrics.sh         Pushes test results + stability metrics to InfluxDB
-    └── push-pipeline-metrics.sh       Pushes CI job duration + status to InfluxDB
+│       ├── quality-overview.json         Resultados Web/API, pass rates, trends
+│       ├── performance.json              JMeter latência, throughput, erros
+│       └── pipeline-health.json          CI/CD success rate, duração, feedback
+└── 📜 scripts/
+    ├── push-allure-metrics.sh            Resultados + severidade + cumulativos → InfluxDB
+    └── push-pipeline-metrics.sh          Duração + status de jobs → InfluxDB
 ```
-
-**Data flow:**
-
-- JMeter sends real-time metrics to InfluxDB via Backend Listener during execution
-- CI workflows push Allure test results (pass/fail/flaky) after each run
-- CI workflows push pipeline metrics (duration, status) for delivery health tracking
-- Dashboards are provisioned as code and auto-deployed via CI
 
 ---
 
-## CI/CD
+## 🔄 CI/CD
 
 ### Workflows
 
-| Workflow          | Trigger                    | What it does                                                                                    |
-| ----------------- | -------------------------- | ----------------------------------------------------------------------------------------------- |
-| `ci.yml`          | Push to `main`, PRs        | Deploys monitoring stack, runs API + Web tests, deploys reports, pushes test + pipeline metrics |
-| `performance.yml` | Manual (workflow_dispatch) | Runs selected JMeter test plan, deploys HTML report, pushes pipeline metrics                    |
+| Workflow                 | Trigger          | Schedule         | O que faz                                                            |
+| :----------------------- | :--------------- | :--------------- | :------------------------------------------------------------------- |
+| 🔄 **`ci.yml`**          | Push `main`, PRs | 🕐 08h e 16h BRT | Deploy monitoring → API + Web tests → Deploy reports → Push métricas |
+| ✈️ **`performance.yml`** | Manual           | 🕐 00h BRT       | JMeter test plan → HTML report → Push métricas pipeline              |
 
-### Infrastructure
-
-- **Runner**: Self-hosted GitHub Actions runner on VPS (`agibank-vps`)
-- **Reports**: Deployed via `rsync` to `/srv/apps/agibank-challenge-reports/`
-- **Monitoring**: Grafana at `rennangimenez.com/grafana/`
-- **Served by**: Nginx at `rennangimenez.com/agibank-challenge/`
-
----
-
-## Code Quality
-
-- **Java formatting**: Google Java Format via [Spotless](https://github.com/diffplug/spotless) (`./mvnw spotless:apply`)
-- **File formatting**: [Prettier](https://prettier.io/) for YAML, JSON, Markdown
-- **Pre-commit hooks**: [Husky](https://typicode.github.io/husky/) runs lint-staged + Spotless check before every commit
-- **EditorConfig**: Consistent indentation across editors
-
----
-
-## Documentation
-
-- [Test Plan](docs/test-plan.md) -- Complete test plan with all 42 scenarios and 25 proposed next steps
-- [Test Report (Web + API)](docs/test-report.md) -- Execution results for 14 Web + 26 API tests
-- [Performance Report](docs/performance-report.md) -- Load and spike test results on BlazeDemo
-
----
-
-## Project Structure
+### Pipeline CI/CD (`ci.yml`)
 
 ```
-├── api-tests/
+┌────────────────────┐
+│  Deploy Monitoring │  ← Sync Grafana + InfluxDB + Prometheus
+└─────────┬──────────┘
+          │
+    ┌─────┴─────┐
+    │           │
+┌───▼───┐  ┌───▼───┐
+│  API  │  │  Web  │   ← Testes em paralelo
+│ Tests │  │ Tests │
+└───┬───┘  └───┬───┘
+    │          │
+    ▼          ▼
+  Allure     Allure      ← Gera reports com evidências
+  Report     Report
+    │          │
+    ▼          ▼
+  Deploy    Deploy        ← rsync para VPS
+    │          │
+    ▼          ▼
+  Push      Push          ← Métricas para InfluxDB
+  Metrics   Metrics
+```
+
+### Infraestrutura
+
+| Recurso           | Detalhe                                                        |
+| :---------------- | :------------------------------------------------------------- |
+| 🖥️ **Runner**     | Self-hosted GitHub Actions na VPS (`agibank-vps`)              |
+| 📁 **Reports**    | Deploy via `rsync` para `/srv/apps/agibank-challenge-reports/` |
+| 📈 **Monitoring** | Grafana em `rennangimenez.com/grafana/`                        |
+| 🌐 **Serving**    | Nginx em `rennangimenez.com/agibank-challenge/`                |
+
+---
+
+## 🧹 Qualidade de Código
+
+| Ferramenta          | Função                 | Comando                    |
+| :------------------ | :--------------------- | :------------------------- |
+| ☕ **Spotless**     | Google Java Format     | `./mvnw spotless:apply`    |
+| 💅 **Prettier**     | YAML, JSON, Markdown   | `npx prettier --write .`   |
+| 🐶 **Husky**        | Pre-commit hooks       | Automático no `git commit` |
+| 📐 **EditorConfig** | Indentação consistente | Automático nos editores    |
+
+O pre-commit hook roda automaticamente:
+
+1. **lint-staged** — Prettier nos arquivos staged
+2. **Spotless check** — Verifica formatação Java
+3. ❌ Bloqueia commit se houver violação
+
+---
+
+## 📝 Documentação
+
+| Documento                       | Conteúdo                                         | Link                                                     |
+| :------------------------------ | :----------------------------------------------- | :------------------------------------------------------- |
+| 📋 **Plano de Testes**          | 42 cenários detalhados + 25 next steps propostos | [docs/test-plan.md](docs/test-plan.md)                   |
+| 🧪 **Relatório de Testes**      | Resultados Web + API com análise detalhada       | [docs/test-report.md](docs/test-report.md)               |
+| ✈️ **Relatório de Performance** | Load + spike test com métricas e análise         | [docs/performance-report.md](docs/performance-report.md) |
+
+---
+
+## 🗂️ Estrutura do Projeto
+
+```
+├── 🐕 api-tests/
 │   ├── pom.xml
 │   └── src/test/
 │       ├── java/br/com/agibank/qa/api/
 │       │   ├── client/
-│       │   │   └── DogApiClient.java          # HTTP client layer
+│       │   │   └── DogApiClient.java              ← Camada HTTP
 │       │   ├── fixtures/
-│       │   │   ├── BreedData.java             # Test data: breeds, URLs, counts
-│       │   │   └── SecurityPayloads.java      # Test data: SQL injection, XSS, etc.
+│       │   │   ├── BreedData.java                 ← Dados: raças, URLs, contagens
+│       │   │   └── SecurityPayloads.java          ← Payloads: SQL, XSS, etc.
 │       │   └── tests/
-│       │       ├── BreedListTest.java          # /breeds/list/all
-│       │       ├── BreedImagesTest.java        # /breed/{breed}/images
-│       │       ├── RandomImageTest.java        # /breeds/image/random
-│       │       ├── EdgeCaseTest.java           # Edge cases & boundary values
-│       │       └── SecurityTest.java           # SQL injection, path traversal
-│       └── resources/schemas/                  # JSON Schema files
+│       │       ├── BreedListTest.java              ← 📋 Listagem de Raças
+│       │       ├── BreedImagesTest.java            ← 🖼️ Imagens por Raça
+│       │       ├── RandomImageTest.java            ← 🎲 Imagem Aleatória
+│       │       ├── EdgeCaseTest.java               ← ⚠️ Casos Extremos
+│       │       └── SecurityTest.java               ← 🛡️ Segurança
+│       └── resources/
+│           ├── schemas/                            ← JSON Schemas de contrato
+│           └── categories.json                     ← Categorias Allure
 │
-├── web-tests/
+├── 🌐 web-tests/
 │   ├── pom.xml
 │   └── src/test/java/br/com/agibank/qa/web/
 │       ├── base/
-│       │   └── BaseTest.java                   # Playwright lifecycle
+│       │   └── BaseTest.java                       ← Lifecycle Playwright + tracing
+│       ├── extensions/
+│       │   └── ScreenshotOnResultExtension.java    ← 📸 Captura automática de evidências
 │       ├── pages/
-│       │   ├── BlogHomePage.java               # Home page actions
-│       │   └── SearchResultsPage.java          # Results page assertions
+│       │   ├── BlogHomePage.java                   ← Page Object: home
+│       │   └── SearchResultsPage.java              ← Page Object: resultados
 │       ├── fixtures/
-│       │   ├── SearchData.java                 # Test data: search terms, payloads
-│       │   └── ExpectedResults.java            # Test data: URLs, selectors
+│       │   ├── SearchData.java                     ← Termos de busca + payloads
+│       │   └── ExpectedResults.java                ← URLs, seletores esperados
 │       └── tests/
-│           ├── BlogSearchTest.java             # Search scenarios
-│           ├── BlogSmokeTest.java              # Smoke tests
-│           └── BlogSecurityTest.java           # Security tests
+│           ├── BlogSmokeTest.java                  ← 💨 Smoke Tests
+│           ├── BlogSearchTest.java                 ← 🔍 Busca
+│           └── BlogSecurityTest.java               ← 🛡️ Segurança
 │
-├── performance-tests/
+├── ✈️ performance-tests/
 │   ├── pom.xml
 │   └── src/test/jmeter/
-│       ├── blazedemo-load-test.jmx             # Sustained load test
-│       └── blazedemo-spike-test.jmx            # Spike/burst test
+│       ├── blazedemo-load-test.jmx                 ← ⚡ Carga sustentada
+│       └── blazedemo-spike-test.jmx                ← 📈 Spike/burst
 │
-├── infra/                                      # Monitoring stack
-│   ├── docker-compose.yml                      # Grafana + InfluxDB + Prometheus
-│   ├── grafana/dashboards/                     # 3 provisioned dashboard JSONs
+├── 📊 infra/
+│   ├── docker-compose.yml                          ← Grafana + InfluxDB + Prometheus
+│   ├── grafana/dashboards/                         ← 3 dashboards provisionados
 │   └── scripts/
-│       ├── push-allure-metrics.sh              # Test results + flaky metrics to InfluxDB
-│       └── push-pipeline-metrics.sh            # CI/CD job duration + status to InfluxDB
+│       ├── push-allure-metrics.sh                  ← Resultados + severidade → InfluxDB
+│       └── push-pipeline-metrics.sh                ← CI/CD duração + status → InfluxDB
 │
-├── .github/workflows/
-│   ├── ci.yml                                  # API + Web CI with metrics push
-│   └── performance.yml                         # Manual perf trigger
+├── 🔄 .github/workflows/
+│   ├── ci.yml                                      ← CI: API + Web + métricas
+│   └── performance.yml                             ← Performance: manual + cron
 │
-├── docs/
-│   ├── test-plan.md                            # Complete test plan (42 scenarios)
-│   ├── test-report.md                          # Web + API execution results
-│   └── performance-report.md                   # Performance test results
+├── 📝 docs/
+│   ├── test-plan.md                                ← 📋 Plano completo (42 cenários)
+│   ├── test-report.md                              ← 🧪 Resultados Web + API
+│   └── performance-report.md                       ← ✈️ Resultados de performance
 │
-├── pom.xml                                     # Parent POM
-├── mvnw / mvnw.cmd                             # Maven Wrapper
-├── package.json                                # Husky + Prettier
-└── README.md
+├── 📦 pom.xml                                      ← Parent POM
+├── 🔧 mvnw / mvnw.cmd                              ← Maven Wrapper
+├── 📗 package.json                                  ← Husky + Prettier
+└── 📖 README.md                                     ← Você está aqui! 👋
 ```
 
 ---
 
-## Author
+## 👨‍💻 Autor
 
-**Rennan Gimenez** -- [GitHub](https://github.com/rennangimenez) | [Portfolio](https://rennangimenez.com)
+<table>
+  <tr>
+    <td align="center">
+      <strong>Rennan Gimenez</strong><br />
+      <a href="https://github.com/rennangimenez">GitHub</a> · <a href="https://rennangimenez.com">Portfolio</a>
+    </td>
+  </tr>
+</table>
+
+---
+
+<p align="center">
+  Feito com ☕ e muita dedicação para o desafio AgiBank QA.
+</p>
