@@ -20,6 +20,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Sync monitoring config
+        run: |
+          sudo mkdir -p /opt/monitoring
+          sudo rsync -avz --delete --exclude 'scripts/' infra/ /opt/monitoring/
+          cd /opt/monitoring && sudo docker compose up -d
+          sleep 5
+
       - name: Verify InfluxDB is reachable
         run: |
           if curl -sf http://localhost:8086/ping; then

@@ -15,13 +15,343 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "links": [],
+  "links": [
+    {
+      "icon": "external link",
+      "tags": [],
+      "title": "Allure Web Report",
+      "type": "link",
+      "url": "https://rennangimenez.com/agibank-challenge/web/"
+    },
+    {
+      "icon": "external link",
+      "tags": [],
+      "title": "Allure API Report",
+      "type": "link",
+      "url": "https://rennangimenez.com/agibank-challenge/api/"
+    },
+    {
+      "icon": "external link",
+      "tags": [],
+      "title": "JMeter Report",
+      "type": "link",
+      "url": "https://rennangimenez.com/agibank-challenge/performance/"
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
-      "id": 100,
-      "title": "Overview",
+      "id": 200,
+      "title": "📊 Test Results (Allure)",
+      "type": "row"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+      "id": 201,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "alias": "Total Tests",
+          "query": "SELECT last(\"total\") FROM \"test_results\" WHERE (\"test_type\" =~ /^$test_type$/) AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Total Tests",
+      "type": "stat"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+      "id": 202,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "alias": "Passed",
+          "query": "SELECT last(\"passed\") FROM \"test_results\" WHERE (\"test_type\" =~ /^$test_type$/) AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Passed",
+      "type": "stat"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+      "id": 203,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "alias": "Failed",
+          "query": "SELECT last(\"failed\") FROM \"test_results\" WHERE (\"test_type\" =~ /^$test_type$/) AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Failed",
+      "type": "stat"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "orange", "value": null }]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+      "id": 204,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "alias": "Broken",
+          "query": "SELECT last(\"broken\") FROM \"test_results\" WHERE (\"test_type\" =~ /^$test_type$/) AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Broken",
+      "type": "stat"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "blue", "value": null }]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+      "id": 205,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "alias": "Skipped",
+          "query": "SELECT last(\"skipped\") FROM \"test_results\" WHERE (\"test_type\" =~ /^$test_type$/) AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Skipped",
+      "type": "stat"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "purple", "value": null }]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+      "id": 206,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "alias": "Duration",
+          "query": "SELECT last(\"duration\") / 1000 FROM \"test_results\" WHERE (\"test_type\" =~ /^$test_type$/) AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Suite Duration",
+      "type": "stat"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "spanNulls": false,
+            "stacking": { "mode": "normal" }
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "passed" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "failed" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "broken" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "skipped" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "gridPos": { "h": 9, "w": 16, "x": 0, "y": 5 },
+      "id": 210,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "alias": "passed",
+          "query": "SELECT \"passed\" FROM \"test_results\" WHERE (\"test_type\" =~ /^$test_type$/) AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "failed",
+          "query": "SELECT \"failed\" FROM \"test_results\" WHERE (\"test_type\" =~ /^$test_type$/) AND $timeFilter",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "broken",
+          "query": "SELECT \"broken\" FROM \"test_results\" WHERE (\"test_type\" =~ /^$test_type$/) AND $timeFilter",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "skipped",
+          "query": "SELECT \"skipped\" FROM \"test_results\" WHERE (\"test_type\" =~ /^$test_type$/) AND $timeFilter",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Test Results Trend",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "spanNulls": false },
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 9, "w": 8, "x": 16, "y": 5 },
+      "id": 211,
+      "options": {
+        "legend": {
+          "calcs": ["mean", "lastNotNull"],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "alias": "$tag_test_type",
+          "query": "SELECT \"duration\" / 1000 FROM \"test_results\" WHERE $timeFilter GROUP BY \"test_type\"",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Suite Duration by Type",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "id": 300,
+      "title": "⚡ Performance Testing (JMeter - BlazeDemo)",
       "type": "row"
     },
     {
@@ -39,8 +369,8 @@
           "unit": "ms"
         }
       },
-      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
-      "id": 1,
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 15 },
+      "id": 301,
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -51,9 +381,7 @@
       },
       "targets": [
         {
-          "alias": "Avg Response Time",
-          "groupBy": [{ "params": ["$__interval"], "type": "time" }],
-          "measurement": "jmeter",
+          "alias": "Avg RT",
           "query": "SELECT mean(\"avg\") FROM \"jmeter\" WHERE (\"application\" =~ /^$application$/ AND \"transaction\" = 'all') AND $timeFilter GROUP BY time($__interval)",
           "rawQuery": true,
           "refId": "A",
@@ -78,8 +406,8 @@
           "unit": "ms"
         }
       },
-      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
-      "id": 2,
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 15 },
+      "id": 302,
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -90,7 +418,7 @@
       },
       "targets": [
         {
-          "alias": "P90 Response Time",
+          "alias": "P90",
           "query": "SELECT mean(\"pct90.0\") FROM \"jmeter\" WHERE (\"application\" =~ /^$application$/ AND \"transaction\" = 'all') AND $timeFilter GROUP BY time($__interval)",
           "rawQuery": true,
           "refId": "A",
@@ -115,8 +443,8 @@
           "unit": "ms"
         }
       },
-      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
-      "id": 3,
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 15 },
+      "id": 303,
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -127,7 +455,7 @@
       },
       "targets": [
         {
-          "alias": "P95 Response Time",
+          "alias": "P95",
           "query": "SELECT mean(\"pct95.0\") FROM \"jmeter\" WHERE (\"application\" =~ /^$application$/ AND \"transaction\" = 'all') AND $timeFilter GROUP BY time($__interval)",
           "rawQuery": true,
           "refId": "A",
@@ -152,8 +480,8 @@
           "unit": "reqps"
         }
       },
-      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
-      "id": 4,
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 15 },
+      "id": 304,
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -189,8 +517,8 @@
           "unit": "percent"
         }
       },
-      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
-      "id": 5,
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 15 },
+      "id": 305,
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -222,8 +550,8 @@
           "unit": "short"
         }
       },
-      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
-      "id": 6,
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 15 },
+      "id": 306,
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -243,13 +571,6 @@
       ],
       "title": "Active Threads",
       "type": "stat"
-    },
-    {
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
-      "id": 101,
-      "title": "Response Times",
-      "type": "row"
     },
     {
       "datasource": "InfluxDB-JMeter",
@@ -282,8 +603,8 @@
           }
         ]
       },
-      "gridPos": { "h": 10, "w": 16, "x": 0, "y": 6 },
-      "id": 10,
+      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 19 },
+      "id": 310,
       "options": {
         "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" },
         "tooltip": { "mode": "multi", "sort": "desc" }
@@ -325,12 +646,38 @@
       "datasource": "InfluxDB-JMeter",
       "fieldConfig": {
         "defaults": {
+          "custom": { "lineWidth": 2, "fillOpacity": 15, "spanNulls": true },
+          "unit": "reqps"
+        }
+      },
+      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 19 },
+      "id": 311,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "alias": "Throughput",
+          "query": "SELECT mean(\"hit\") FROM \"jmeter\" WHERE (\"application\" =~ /^$application$/ AND \"transaction\" = 'all') AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Throughput Over Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "InfluxDB-JMeter",
+      "fieldConfig": {
+        "defaults": {
           "custom": { "lineWidth": 2, "fillOpacity": 20, "spanNulls": true },
           "unit": "short"
         }
       },
-      "gridPos": { "h": 10, "w": 8, "x": 16, "y": 6 },
-      "id": 11,
+      "gridPos": { "h": 10, "w": 8, "x": 0, "y": 29 },
+      "id": 312,
       "options": {
         "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" },
         "tooltip": { "mode": "multi" }
@@ -348,39 +695,6 @@
       "type": "timeseries"
     },
     {
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 16 },
-      "id": 102,
-      "title": "Throughput & Errors",
-      "type": "row"
-    },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
-          "custom": { "lineWidth": 2, "fillOpacity": 15, "spanNulls": true },
-          "unit": "reqps"
-        }
-      },
-      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 17 },
-      "id": 20,
-      "options": {
-        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" },
-        "tooltip": { "mode": "multi" }
-      },
-      "targets": [
-        {
-          "alias": "Throughput",
-          "query": "SELECT mean(\"hit\") FROM \"jmeter\" WHERE (\"application\" =~ /^$application$/ AND \"transaction\" = 'all') AND $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "Throughput (requests/sec)",
-      "type": "timeseries"
-    },
-    {
       "datasource": "InfluxDB-JMeter",
       "fieldConfig": {
         "defaults": {
@@ -388,8 +702,8 @@
           "unit": "short"
         }
       },
-      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 17 },
-      "id": 21,
+      "gridPos": { "h": 10, "w": 8, "x": 8, "y": 29 },
+      "id": 313,
       "options": {
         "legend": { "calcs": ["sum", "max"], "displayMode": "table", "placement": "bottom" },
         "tooltip": { "mode": "multi" }
@@ -410,15 +724,8 @@
           "resultFormat": "time_series"
         }
       ],
-      "title": "Requests & Errors Over Time",
+      "title": "Requests & Errors",
       "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 27 },
-      "id": 103,
-      "title": "Per Transaction",
-      "type": "row"
     },
     {
       "datasource": "InfluxDB-JMeter",
@@ -428,8 +735,8 @@
           "unit": "ms"
         }
       },
-      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 28 },
-      "id": 30,
+      "gridPos": { "h": 10, "w": 8, "x": 16, "y": 29 },
+      "id": 314,
       "options": {
         "legend": { "calcs": ["mean"], "displayMode": "table", "placement": "bottom" },
         "tooltip": { "mode": "multi", "sort": "desc" }
@@ -445,39 +752,27 @@
       ],
       "title": "Response Time by Transaction",
       "type": "timeseries"
-    },
-    {
-      "datasource": "InfluxDB-JMeter",
-      "fieldConfig": {
-        "defaults": {
-          "custom": { "lineWidth": 2, "fillOpacity": 10, "spanNulls": true },
-          "unit": "short"
-        }
-      },
-      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 28 },
-      "id": 31,
-      "options": {
-        "legend": { "calcs": ["sum"], "displayMode": "table", "placement": "bottom" },
-        "tooltip": { "mode": "multi" }
-      },
-      "targets": [
-        {
-          "alias": "$tag_transaction",
-          "query": "SELECT sum(\"countError\") FROM \"jmeter\" WHERE (\"application\" =~ /^$application$/ AND \"transaction\" != 'all') AND $timeFilter GROUP BY time($__interval), \"transaction\" fill(null)",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "Errors by Transaction",
-      "type": "timeseries"
     }
   ],
   "refresh": "5s",
   "schemaVersion": 39,
-  "tags": ["jmeter", "performance"],
+  "tags": ["agibank", "qa", "performance", "allure"],
   "templating": {
     "list": [
+      {
+        "current": { "selected": true, "text": "All", "value": "$__all" },
+        "datasource": "InfluxDB-JMeter",
+        "definition": "SHOW TAG VALUES FROM \"test_results\" WITH KEY = \"test_type\"",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Test Type",
+        "multi": true,
+        "name": "test_type",
+        "query": "SHOW TAG VALUES FROM \"test_results\" WITH KEY = \"test_type\"",
+        "refresh": 2,
+        "sort": 0,
+        "type": "query"
+      },
       {
         "current": { "selected": false, "text": "blazedemo", "value": "blazedemo" },
         "datasource": "InfluxDB-JMeter",
@@ -497,7 +792,7 @@
   "time": { "from": "now-30m", "to": "now" },
   "timepicker": {},
   "timezone": "",
-  "title": "JMeter Performance Dashboard",
-  "uid": "jmeter-perf",
+  "title": "AgiBank QA Challenge",
+  "uid": "agibank-challenge",
   "version": 1
 }

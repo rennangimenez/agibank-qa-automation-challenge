@@ -8,8 +8,31 @@ on:
   workflow_dispatch:
 
 jobs:
+  deploy-monitoring:
+    name: Deploy Monitoring Stack
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync monitoring config to /opt/monitoring
+        run: |
+          sudo mkdir -p /opt/monitoring
+          sudo rsync -avz --delete \
+            --exclude 'scripts/' \
+            infra/ /opt/monitoring/
+
+      - name: Restart Grafana to pick up dashboard changes
+        run: |
+          cd /opt/monitoring
+          sudo docker compose up -d --force-recreate grafana
+          sleep 5
+          curl -sf http://localhost:3000/api/health && echo "Grafana healthy" || echo "Grafana not ready yet"
+        continue-on-error: true
+
   api-tests:
     name: API Tests
+    needs: deploy-monitoring
     runs-on: self-hosted
     steps:
       - name: Checkout
@@ -39,6 +62,7 @@ jobs:
 
   web-tests:
     name: Web Tests
+    needs: deploy-monitoring
     runs-on: self-hosted
     steps:
       - name: Checkout
