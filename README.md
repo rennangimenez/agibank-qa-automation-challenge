@@ -333,12 +333,14 @@ Testa o [Blog do Agi](https://blogdoagi.com.br):
 
 ### 🌍 Reports Online (atualizados a cada CI run)
 
-| Report             | Link                                                                                                         | Formato           |
-| :----------------- | :----------------------------------------------------------------------------------------------------------- | :---------------- |
-| 🌐 **Web Tests**   | [rennangimenez.com/agibank-challenge/web/](https://rennangimenez.com/agibank-challenge/web/)                 | Allure interativo |
-| 🐕 **API Tests**   | [rennangimenez.com/agibank-challenge/api/](https://rennangimenez.com/agibank-challenge/api/)                 | Allure interativo |
-| ✈️ **Performance** | [rennangimenez.com/agibank-challenge/performance/](https://rennangimenez.com/agibank-challenge/performance/) | JMeter HTML       |
-| 📈 **Dashboards**  | [rennangimenez.com/grafana/](https://rennangimenez.com/grafana/)                                             | Grafana live      |
+| Report                     | Link                                                                                                                     | Formato              |
+| :------------------------- | :----------------------------------------------------------------------------------------------------------------------- | :------------------- |
+| 🌐 **Web Tests**           | [rennangimenez.com/agibank-challenge/web/](https://rennangimenez.com/agibank-challenge/web/)                             | Allure interativo    |
+| 🐕 **API Tests**           | [rennangimenez.com/agibank-challenge/api/](https://rennangimenez.com/agibank-challenge/api/)                             | Allure interativo    |
+| ✈️ **Performance**         | [rennangimenez.com/agibank-challenge/performance/](https://rennangimenez.com/agibank-challenge/performance/)             | Index (Load + Spike) |
+| ⚡ **Performance (Load)**  | [rennangimenez.com/agibank-challenge/performance/load/](https://rennangimenez.com/agibank-challenge/performance/load/)   | JMeter HTML          |
+| 📈 **Performance (Spike)** | [rennangimenez.com/agibank-challenge/performance/spike/](https://rennangimenez.com/agibank-challenge/performance/spike/) | JMeter HTML          |
+| 📈 **Dashboards**          | [rennangimenez.com/grafana/](https://rennangimenez.com/grafana/)                                                         | Grafana live         |
 
 ### 🎨 Features dos Reports Allure
 
