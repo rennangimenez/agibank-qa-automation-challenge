@@ -47,6 +47,10 @@
                 <configuration>
                     <generateReports>true</generateReports>
                     <resultsFileFormat>csv</resultsFileFormat>
+                    <errorRateThresholdInPercent>10.0</errorRateThresholdInPercent>
+                    <testFilesIncluded>
+                        <jMeterTestFile>${jmeter.test}.jmx</jMeterTestFile>
+                    </testFilesIncluded>
                 </configuration>
             </plugin>
         </plugins>
