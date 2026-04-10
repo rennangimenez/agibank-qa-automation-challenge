@@ -27,6 +27,9 @@ jobs:
           cd /opt/monitoring && sudo docker compose up -d
           sleep 5
 
+      - name: Record start time
+        run: echo "JOB_START=$(date +%s)" >> $GITHUB_ENV
+
       - name: Verify InfluxDB is reachable
         run: |
           if curl -sf http://localhost:8086/ping; then
@@ -46,3 +49,18 @@ jobs:
           if [ -n "$REPORT_DIR" ]; then
             rsync -avz --delete "$REPORT_DIR/" /srv/apps/agibank-challenge-reports/performance/
           fi
+
+      - name: Push Pipeline Metrics
+        if: always()
+        run: |
+          chmod +x infra/scripts/push-pipeline-metrics.sh
+          DURATION=$(( $(date +%s) - $JOB_START ))
+          STATUS="${{ job.status }}"
+          bash infra/scripts/push-pipeline-metrics.sh \
+            performance \
+            "$STATUS" \
+            "$DURATION" \
+            "${{ github.ref_name }}" \
+            "${{ github.sha }}" \
+            "${{ github.run_id }}"
+        continue-on-error: true

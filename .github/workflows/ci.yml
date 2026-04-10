@@ -38,6 +38,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Record start time
+        run: echo "JOB_START=$(date +%s)" >> $GITHUB_ENV
+
       - name: Run API Tests
         run: ./mvnw clean test -pl api-tests
 
@@ -60,6 +63,21 @@ jobs:
             "${{ github.sha }}"
         continue-on-error: true
 
+      - name: Push Pipeline Metrics
+        if: always()
+        run: |
+          chmod +x infra/scripts/push-pipeline-metrics.sh
+          DURATION=$(( $(date +%s) - $JOB_START ))
+          STATUS="${{ job.status }}"
+          bash infra/scripts/push-pipeline-metrics.sh \
+            api-tests \
+            "$STATUS" \
+            "$DURATION" \
+            "${{ github.ref_name }}" \
+            "${{ github.sha }}" \
+            "${{ github.run_id }}"
+        continue-on-error: true
+
   web-tests:
     name: Web Tests
     needs: deploy-monitoring
@@ -67,6 +85,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Record start time
+        run: echo "JOB_START=$(date +%s)" >> $GITHUB_ENV
 
       - name: Install Playwright System Dependencies
         run: sudo npx -y playwright install-deps chromium
@@ -94,4 +115,19 @@ jobs:
             web \
             "${{ github.ref_name }}" \
             "${{ github.sha }}"
+        continue-on-error: true
+
+      - name: Push Pipeline Metrics
+        if: always()
+        run: |
+          chmod +x infra/scripts/push-pipeline-metrics.sh
+          DURATION=$(( $(date +%s) - $JOB_START ))
+          STATUS="${{ job.status }}"
+          bash infra/scripts/push-pipeline-metrics.sh \
+            web-tests \
+            "$STATUS" \
+            "$DURATION" \
+            "${{ github.ref_name }}" \
+            "${{ github.sha }}" \
+            "${{ github.run_id }}"
         continue-on-error: true
