@@ -18,10 +18,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Epic("Blog do Agi")
-@Feature("Search")
+@Epic("🌐 Blog do Agi")
+@Feature("🔍 Busca")
 @Owner("rennan")
 @Link(name = "Blog do Agi", url = "https://blogdoagi.com.br")
+@DisplayName("🔍 Busca — Blog do Agi")
 class BlogSearchTest extends BaseTest {
 
   private BlogHomePage homePage;
@@ -32,10 +33,12 @@ class BlogSearchTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("Search with valid term returns results")
-  @Description("Searching for 'empréstimo' should return articles with titles and links")
+  @DisplayName("✅ Busca com termo válido retorna resultados")
+  @Description(
+      "Ao pesquisar por 'empréstimo', a página deve retornar artigos com títulos e links válidos, "
+          + "confirmando que o motor de busca está funcional.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("Valid Search")
+  @Story("✅ Busca Válida")
   void searchWithValidTermReturnsResults() {
     // Arrange
     String searchTerm = SearchData.VALID_TERM;
@@ -62,11 +65,12 @@ class BlogSearchTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("Search with nonexistent term shows no results message")
+  @DisplayName("🚫 Busca com termo inexistente exibe mensagem de 'nada encontrado'")
   @Description(
-      "Searching for a nonsense term should display zero articles and a no-results message")
+      "Ao pesquisar um termo que não existe no blog, nenhum artigo deve ser retornado "
+          + "e uma mensagem amigável de 'nada foi encontrado' deve ser exibida.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Empty Search Results")
+  @Story("🚫 Resultado Vazio")
   void searchWithNonexistentTermShowsNoResults() {
     // Arrange
     String searchTerm = SearchData.NONEXISTENT_TERM;
@@ -88,10 +92,12 @@ class BlogSearchTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("Search components are present on the page")
-  @Description("The search icon and form elements should exist in the page DOM")
+  @DisplayName("🧩 Componentes de busca estão presentes na página")
+  @Description(
+      "O ícone de busca e os elementos do formulário de pesquisa devem existir no DOM da página, "
+          + "garantindo que o usuário tenha acesso à funcionalidade de busca.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Search UI Components")
+  @Story("🧩 Componentes de Interface")
   void searchComponentsArePresentOnPage() {
     // Act
     homePage.navigate();

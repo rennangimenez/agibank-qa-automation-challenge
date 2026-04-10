@@ -18,10 +18,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Epic("Dog API")
-@Feature("Edge Cases")
+@Epic("🐕 Dog API")
+@Feature("⚠️ Casos Extremos")
 @Owner("rennan")
 @Link(name = "Dog API Docs", url = "https://dog.ceo/dog-api/")
+@DisplayName("⚠️ Casos Extremos")
 class EdgeCaseTest {
 
   private static DogApiClient client;
@@ -32,10 +33,12 @@ class EdgeCaseTest {
   }
 
   @Test
-  @DisplayName("Breed name with special characters returns 404")
-  @Description("Breed names containing @, #, $ should return a 404 error")
+  @DisplayName("🔣 Nome de raça com caracteres especiais retorna 404")
+  @Description(
+      "Nomes de raça contendo @, #, $ devem retornar erro 404, "
+          + "validando a rejeição de entradas com caracteres inválidos.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Invalid Breed Names")
+  @Story("🚫 Nomes de Raça Inválidos")
   void breedWithSpecialCharactersReturns404() {
     // Arrange
     String breed = BreedData.SPECIAL_CHARS_BREED;
@@ -52,10 +55,10 @@ class EdgeCaseTest {
   }
 
   @Test
-  @DisplayName("Numeric breed name returns 404")
-  @Description("Using a numeric value as breed name should return 404")
+  @DisplayName("🔢 Nome numérico de raça retorna 404")
+  @Description("Usar um valor numérico como nome de raça deve retornar 404.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Invalid Breed Names")
+  @Story("🚫 Nomes de Raça Inválidos")
   void numericBreedNameReturns404() {
     // Arrange
     String breed = BreedData.NUMERIC_BREED;
@@ -68,10 +71,12 @@ class EdgeCaseTest {
   }
 
   @Test
-  @DisplayName("Very long breed name returns 404")
-  @Description("A breed name exceeding 100 characters should return 404 gracefully")
+  @DisplayName("📏 Nome de raça extremamente longo retorna 404")
+  @Description(
+      "Um nome de raça com mais de 100 caracteres deve retornar 404 (ou 414) "
+          + "de forma estável, sem causar erro no servidor.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Invalid Breed Names")
+  @Story("🚫 Nomes de Raça Inválidos")
   void veryLongBreedNameReturns404() {
     // Arrange
     String breed = BreedData.longBreedName();
@@ -86,10 +91,12 @@ class EdgeCaseTest {
   }
 
   @Test
-  @DisplayName("Breed name with unicode characters returns 404")
-  @Description("Unicode characters in breed name should be handled without server crash")
+  @DisplayName("🌍 Nome de raça com caracteres Unicode é tratado")
+  @Description(
+      "Caracteres Unicode no nome da raça devem ser tratados sem causar crash no servidor "
+          + "(não deve retornar 5xx).")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Invalid Breed Names")
+  @Story("🚫 Nomes de Raça Inválidos")
   void unicodeBreedNameIsHandled() {
     // Arrange
     String breed = BreedData.UNICODE_BREED;
@@ -104,10 +111,12 @@ class EdgeCaseTest {
   }
 
   @Test
-  @DisplayName("Multiple random images returns correct count")
-  @Description("GET /breeds/image/random/5 should return exactly 5 image URLs")
+  @DisplayName("🎲 Múltiplas imagens aleatórias retorna quantidade correta")
+  @Description(
+      "A requisição GET /breeds/image/random/5 deve retornar exatamente 5 URLs de imagem, "
+          + "validando a paginação do endpoint.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("Multiple Random Images")
+  @Story("🎲 Múltiplas Imagens Aleatórias")
   void multipleRandomImagesReturnsCorrectCount() {
     // Arrange
     int count = BreedData.RANDOM_IMAGE_COUNT;
@@ -124,10 +133,10 @@ class EdgeCaseTest {
   }
 
   @Test
-  @DisplayName("Random image with count zero returns empty or error")
-  @Description("Requesting 0 random images should be handled gracefully")
+  @DisplayName("0️⃣ Requisição com contagem zero é tratada")
+  @Description("Solicitar 0 imagens aleatórias deve ser tratado de forma estável pela API.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Multiple Random Images")
+  @Story("🎲 Múltiplas Imagens Aleatórias")
   void randomImagesWithZeroCount() {
     // Act
     Response response = client.getMultipleRandomImages(0);
@@ -139,10 +148,11 @@ class EdgeCaseTest {
   }
 
   @Test
-  @DisplayName("Random image with negative count is handled")
-  @Description("Requesting a negative number of random images should not cause a server error")
+  @DisplayName("➖ Contagem negativa de imagens não causa erro no servidor")
+  @Description(
+      "Solicitar um número negativo de imagens aleatórias não deve causar erro 5xx no servidor.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Multiple Random Images")
+  @Story("🎲 Múltiplas Imagens Aleatórias")
   void randomImagesWithNegativeCount() {
     // Act
     Response response = client.getMultipleRandomImages(-1);
@@ -154,10 +164,12 @@ class EdgeCaseTest {
   }
 
   @Test
-  @DisplayName("Sub-breed images endpoint returns valid results")
-  @Description("GET /breed/hound/afghan/images should return images for the afghan hound sub-breed")
+  @DisplayName("🐾 Imagens de sub-raça retornam resultados válidos")
+  @Description(
+      "A requisição GET /breed/hound/afghan/images deve retornar imagens da sub-raça "
+          + "afghan hound, com URLs contendo o path correto.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("Sub-Breed Images")
+  @Story("🐾 Imagens de Sub-Raça")
   void subBreedImagesReturnsResults() {
     // Arrange
     String parent = BreedData.VALID_SUB_BREED_PARENT;
@@ -179,10 +191,12 @@ class EdgeCaseTest {
   }
 
   @Test
-  @DisplayName("Invalid sub-breed returns 404")
-  @Description("GET /breed/hound/invalidsubbreed/images should return 404")
+  @DisplayName("❌ Sub-raça inválida retorna 404")
+  @Description(
+      "A requisição GET /breed/hound/invalidsubbreed/images deve retornar 404, "
+          + "validando o tratamento de sub-raças inexistentes.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Sub-Breed Images")
+  @Story("🐾 Imagens de Sub-Raça")
   void invalidSubBreedReturns404() {
     // Arrange
     String parent = BreedData.VALID_SUB_BREED_PARENT;

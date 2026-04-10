@@ -21,10 +21,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Epic("Blog do Agi")
-@Feature("Security")
+@Epic("🌐 Blog do Agi")
+@Feature("🛡️ Segurança")
 @Owner("rennan")
 @Link(name = "Blog do Agi", url = "https://blogdoagi.com.br")
+@DisplayName("🛡️ Segurança — Blog do Agi")
 class BlogSecurityTest extends BaseTest {
 
   private BlogHomePage homePage;
@@ -35,10 +36,12 @@ class BlogSecurityTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("SQL injection in search field is safely handled")
-  @Description("Submitting a SQL injection payload should not cause errors or expose data")
+  @DisplayName("💉 SQL Injection no campo de busca é tratado com segurança")
+  @Description(
+      "Ao submeter um payload de SQL injection no campo de busca, a aplicação não deve "
+          + "expor erros de banco de dados nem retornar dados sensíveis.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("SQL Injection")
+  @Story("💉 SQL Injection")
   void sqlInjectionInSearchIsHandled() {
     // Arrange
     String payload = SearchData.SQL_INJECTION;
@@ -61,13 +64,12 @@ class BlogSecurityTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("XSS attempt in search field does not execute scripts")
+  @DisplayName("🚨 Tentativa de XSS não executa scripts")
   @Description(
-      "Submitting a script tag should not trigger JavaScript execution. "
-          + "The search term may be reflected in the page source (HTML-encoded), "
-          + "but the script must never actually execute.")
+      "Ao submeter uma tag <script> no campo de busca, o JavaScript não deve ser executado. "
+          + "O termo pode aparecer no código-fonte (HTML-encoded), mas o script nunca deve rodar.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("XSS Prevention")
+  @Story("🚨 Prevenção XSS")
   void xssAttemptDoesNotExecuteScripts() {
     // Arrange
     String payload = SearchData.XSS_SCRIPT;
@@ -96,14 +98,14 @@ class BlogSecurityTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("[FINDING] HTML injection in search renders as actual DOM elements")
+  @DisplayName("⚠️ [ACHADO] Injeção HTML renderiza elementos no DOM")
   @Description(
-      "Security finding: HTML tags submitted via search ARE rendered as actual DOM elements. "
-          + "The WordPress search results page does not fully sanitize HTML in the search term, "
-          + "allowing injected elements (e.g., <h1>) to render in the page. "
-          + "This is a stored/reflected HTML injection vulnerability.")
+      "Achado de segurança: Tags HTML submetidas via busca SÃO renderizadas como elementos reais "
+          + "no DOM. O WordPress não sanitiza completamente o HTML no termo pesquisado, "
+          + "permitindo que elementos injetados (ex: <h1>) sejam renderizados. "
+          + "Isso configura uma vulnerabilidade de HTML injection refletida.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("HTML Injection")
+  @Story("⚠️ Injeção HTML")
   void htmlInjectionRendersInDom() {
     // Arrange
     String payload = SearchData.HTML_INJECTION;
@@ -125,10 +127,12 @@ class BlogSecurityTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("Extremely long search input does not crash the application")
-  @Description("Submitting a 5000-character search term should be handled gracefully")
+  @DisplayName("📏 Input extremamente longo não derruba a aplicação")
+  @Description(
+      "Ao submeter um termo de busca com 5.000 caracteres, a aplicação deve tratar "
+          + "a requisição de forma estável, sem crash ou erro 500.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Input Boundary")
+  @Story("📏 Limites de Entrada")
   void extremelyLongSearchInputIsHandled() {
     // Arrange
     String payload = SearchData.longInput();
@@ -145,10 +149,12 @@ class BlogSecurityTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("Search with special characters does not cause errors")
-  @Description("Characters like <, >, &, \", ' should be properly encoded and handled")
+  @DisplayName("🔣 Caracteres especiais na busca são tratados corretamente")
+  @Description(
+      "Caracteres como <, >, &, \" e ' devem ser devidamente codificados "
+          + "e tratados sem causar erros na aplicação.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Input Boundary")
+  @Story("📏 Limites de Entrada")
   void specialCharactersInSearchAreHandled() {
     // Arrange
     String payload = SearchData.SPECIAL_CHARACTERS;

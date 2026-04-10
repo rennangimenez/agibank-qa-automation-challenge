@@ -21,10 +21,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Epic("Dog API")
-@Feature("Breed List")
+@Epic("🐕 Dog API")
+@Feature("📋 Listagem de Raças")
 @Owner("rennan")
 @Link(name = "Dog API Docs", url = "https://dog.ceo/dog-api/")
+@DisplayName("📋 Listagem de Raças")
 class BreedListTest {
 
   private static DogApiClient client;
@@ -35,10 +36,12 @@ class BreedListTest {
   }
 
   @Test
-  @DisplayName("List all breeds returns 200 with success status")
-  @Description("GET /breeds/list/all should return status 200 and status field 'success'")
+  @DisplayName("✅ Listar todas as raças retorna 200")
+  @Description(
+      "A requisição GET /breeds/list/all deve retornar status HTTP 200 "
+          + "e o campo 'status' com valor 'success', confirmando que a API está operacional.")
   @Severity(SeverityLevel.BLOCKER)
-  @Story("List All Breeds")
+  @Story("📋 Listar Todas as Raças")
   void listAllBreedsReturns200() {
     // Act
     Response response = client.listAllBreeds();
@@ -52,10 +55,12 @@ class BreedListTest {
   }
 
   @Test
-  @DisplayName("Breed list contains known breeds")
-  @Description("The breed list should contain well-known breeds like bulldog, labrador, and hound")
+  @DisplayName("🐶 Lista contém raças conhecidas (bulldog, labrador, hound)")
+  @Description(
+      "A lista de raças retornada deve conter raças amplamente conhecidas como "
+          + "bulldog, labrador e hound, garantindo integridade dos dados.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("List All Breeds")
+  @Story("📋 Listar Todas as Raças")
   void breedListContainsKnownBreeds() {
     // Act
     Response response = client.listAllBreeds();
@@ -68,10 +73,12 @@ class BreedListTest {
   }
 
   @Test
-  @DisplayName("Sub-breeds are returned as arrays")
-  @Description("Each breed's sub-breeds should be a list (even if empty)")
+  @DisplayName("🔀 Sub-raças são retornadas como listas")
+  @Description(
+      "Cada raça deve ter suas sub-raças retornadas como uma lista (mesmo que vazia), "
+          + "garantindo consistência na estrutura de dados da API.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Sub-Breeds Structure")
+  @Story("🔀 Estrutura de Sub-Raças")
   void subBreedsAreArrays() {
     // Act
     Response response = client.listAllBreeds();
@@ -87,10 +94,12 @@ class BreedListTest {
   }
 
   @Test
-  @DisplayName("Breed list response matches JSON schema")
-  @Description("The response body should conform to the expected JSON schema")
+  @DisplayName("📄 Resposta segue o contrato JSON Schema")
+  @Description(
+      "O corpo da resposta deve estar em conformidade com o JSON Schema esperado, "
+          + "validando o contrato da API para evitar breaking changes.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("Contract Validation")
+  @Story("📄 Validação de Contrato")
   void responseMatchesJsonSchema() {
     // Act
     Response response = client.listAllBreeds();

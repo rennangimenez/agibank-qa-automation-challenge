@@ -17,10 +17,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Epic("Dog API")
-@Feature("Security")
+@Epic("🐕 Dog API")
+@Feature("🛡️ Segurança")
 @Owner("rennan")
 @Link(name = "Dog API Docs", url = "https://dog.ceo/dog-api/")
+@DisplayName("🛡️ Segurança — Dog API")
 class SecurityTest {
 
   private static DogApiClient client;
@@ -31,10 +32,12 @@ class SecurityTest {
   }
 
   @Test
-  @DisplayName("SQL injection in breed parameter returns error without exposing database info")
-  @Description("Passing SQL payload as breed name should return 404 without database error traces")
+  @DisplayName("💉 SQL Injection no parâmetro de raça não expõe dados")
+  @Description(
+      "Ao passar um payload SQL como nome de raça, a API deve retornar 404 "
+          + "sem expor informações internas do banco de dados nos traces de erro.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("SQL Injection")
+  @Story("💉 SQL Injection")
   void sqlInjectionInBreedParam() {
     // Arrange
     String payload = SecurityPayloads.SQL_INJECTION;
@@ -60,10 +63,12 @@ class SecurityTest {
   }
 
   @Test
-  @DisplayName("Path traversal attempt in breed parameter is safely handled")
-  @Description("Using ../ sequences should not expose file system paths or server internals")
+  @DisplayName("📂 Tentativa de Path Traversal é bloqueada")
+  @Description(
+      "Usar sequências ../ no parâmetro de raça não deve expor caminhos do sistema de arquivos "
+          + "nem informações internas do servidor.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("Path Traversal")
+  @Story("📂 Path Traversal")
   void pathTraversalInBreedParam() {
     // Arrange
     String payload = SecurityPayloads.PATH_TRAVERSAL;
@@ -89,13 +94,13 @@ class SecurityTest {
   }
 
   @Test
-  @DisplayName("[FINDING] API exposes server technology via X-Powered-By header")
+  @DisplayName("⚠️ [ACHADO] API expõe tecnologia via header X-Powered-By")
   @Description(
-      "Security finding: The API returns X-Powered-By header revealing the backend technology. "
-          + "This is a known information disclosure vulnerability that should be mitigated by "
-          + "removing or suppressing the header in the server configuration.")
+      "Achado de segurança: A API retorna o header X-Powered-By revelando a tecnologia backend. "
+          + "Isso é uma vulnerabilidade de divulgação de informações que deveria ser mitigada "
+          + "removendo ou suprimindo o header na configuração do servidor.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Information Disclosure")
+  @Story("🔎 Divulgação de Informações")
   void serverInfoExposedInHeaders() {
     // Act
     Response response = client.listAllBreeds();
@@ -112,10 +117,12 @@ class SecurityTest {
   }
 
   @Test
-  @DisplayName("XSS payload in breed parameter is not reflected in response")
-  @Description("Script tags in the breed parameter should not be echoed back in the response body")
+  @DisplayName("🚨 Payload XSS não é refletido na resposta")
+  @Description(
+      "Tags <script> no parâmetro de raça não devem ser ecoadas no corpo da resposta, "
+          + "evitando ataques de Cross-Site Scripting.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("XSS Prevention")
+  @Story("🚨 Prevenção XSS")
   void xssPayloadInBreedParam() {
     // Arrange
     String payload = SecurityPayloads.XSS_SCRIPT;
@@ -133,10 +140,11 @@ class SecurityTest {
   }
 
   @Test
-  @DisplayName("Malicious Content-Type header is rejected or handled safely")
-  @Description("Sending requests with unexpected Content-Type should not cause server errors")
+  @DisplayName("🧪 Content-Type malicioso é tratado com segurança")
+  @Description(
+      "Enviar requisições com Content-Type inesperado não deve causar erro 5xx no servidor.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Malicious Headers")
+  @Story("🧪 Headers Maliciosos")
   void maliciousContentTypeIsHandled() {
     // Arrange
     String maliciousType = SecurityPayloads.MALICIOUS_CONTENT_TYPE;
@@ -151,10 +159,12 @@ class SecurityTest {
   }
 
   @Test
-  @DisplayName("Oversized request header does not crash the server")
-  @Description("Sending an extremely long header value should be rejected gracefully")
+  @DisplayName("📏 Header de tamanho excessivo não derruba o servidor")
+  @Description(
+      "Enviar um valor de header extremamente longo deve ser rejeitado de forma estável, "
+          + "sem causar crash ou erro interno no servidor.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Malicious Headers")
+  @Story("🧪 Headers Maliciosos")
   void oversizedHeaderIsHandled() {
     // Arrange
     String headerValue = SecurityPayloads.oversizedHeaderValue();

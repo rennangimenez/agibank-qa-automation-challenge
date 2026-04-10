@@ -19,10 +19,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Epic("Blog do Agi")
-@Feature("Smoke Tests")
+@Epic("🌐 Blog do Agi")
+@Feature("💨 Smoke Tests")
 @Owner("rennan")
 @Link(name = "Blog do Agi", url = "https://blogdoagi.com.br")
+@DisplayName("💨 Smoke Tests — Blog do Agi")
 class BlogSmokeTest extends BaseTest {
 
   private BlogHomePage homePage;
@@ -33,10 +34,12 @@ class BlogSmokeTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("Home page loads with HTTP 200")
-  @Description("Navigating to the blog home page should return a successful response")
+  @DisplayName("🏠 Página inicial carrega com sucesso")
+  @Description(
+      "Verifica se a home do blog carrega corretamente retornando HTTP 200, "
+          + "com header visível, URL apontando para o domínio correto e título preenchido.")
   @Severity(SeverityLevel.BLOCKER)
-  @Story("Page Load")
+  @Story("🏠 Carregamento da Página")
   void homePageLoadsSuccessfully() {
     // Act
     homePage.navigate();
@@ -54,10 +57,10 @@ class BlogSmokeTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("Main navigation is visible")
-  @Description("The primary navigation menu should be rendered on the home page")
+  @DisplayName("📌 Menu de navegação principal está visível")
+  @Description("O menu de navegação principal deve estar renderizado e visível na home page.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("Page Structure")
+  @Story("🏗️ Estrutura da Página")
   void mainNavigationIsVisible() {
     // Act
     homePage.navigate();
@@ -68,10 +71,10 @@ class BlogSmokeTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("Logo is present on the page")
-  @Description("The blog logo/brand image should be visible in the header")
+  @DisplayName("🎨 Logo está presente no header")
+  @Description("A logo/marca do blog deve estar presente e visível no cabeçalho da página.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Page Structure")
+  @Story("🏗️ Estrutura da Página")
   void logoIsPresent() {
     // Act
     homePage.navigate();
@@ -83,10 +86,10 @@ class BlogSmokeTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("Footer is present on the page")
-  @Description("The page footer should be rendered with visible content")
+  @DisplayName("📎 Footer está presente na página")
+  @Description("O rodapé da página deve estar renderizado com conteúdo visível.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Page Structure")
+  @Story("🏗️ Estrutura da Página")
   void footerIsPresent() {
     // Act
     homePage.navigate();
@@ -97,10 +100,10 @@ class BlogSmokeTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("Page contains article content")
-  @Description("The home page should display at least one article/post")
+  @DisplayName("📰 Página exibe artigos/posts")
+  @Description("A home page deve exibir pelo menos um artigo ou post publicado.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("Content")
+  @Story("📝 Conteúdo")
   void pageContainsArticles() {
     // Act
     homePage.navigate();
@@ -111,11 +114,12 @@ class BlogSmokeTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("No critical JavaScript errors on page load")
+  @DisplayName("🐛 Sem erros críticos de JavaScript no carregamento")
   @Description(
-      "The home page should load without critical JS runtime errors (resource 404s are excluded)")
+      "A home page deve carregar sem erros críticos de JS no console. "
+          + "Erros de recurso 404 são ignorados por serem comuns em ambientes de produção.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Page Load")
+  @Story("🏠 Carregamento da Página")
   void noCriticalJsErrorsOnLoad() {
     // Arrange
     List<String> jsErrors = new ArrayList<>();

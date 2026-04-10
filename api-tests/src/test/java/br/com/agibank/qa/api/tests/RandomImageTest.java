@@ -19,10 +19,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Epic("Dog API")
-@Feature("Random Image")
+@Epic("🐕 Dog API")
+@Feature("🎲 Imagem Aleatória")
 @Owner("rennan")
 @Link(name = "Dog API Docs", url = "https://dog.ceo/dog-api/")
+@DisplayName("🎲 Imagem Aleatória")
 class RandomImageTest {
 
   private static DogApiClient client;
@@ -33,10 +34,12 @@ class RandomImageTest {
   }
 
   @Test
-  @DisplayName("Random image returns 200 with a valid image URL")
-  @Description("GET /breeds/image/random should return status 200 and a single image URL")
+  @DisplayName("✅ Imagem aleatória retorna 200 com URL válida")
+  @Description(
+      "A requisição GET /breeds/image/random deve retornar status 200 e uma URL de imagem "
+          + "válida apontando para o CDN images.dog.ceo.")
   @Severity(SeverityLevel.BLOCKER)
-  @Story("Single Random Image")
+  @Story("🎯 Imagem Aleatória Única")
   void randomImageReturns200WithValidUrl() {
     // Act
     Response response = client.getRandomImage();
@@ -54,10 +57,12 @@ class RandomImageTest {
   }
 
   @Test
-  @DisplayName("Random image URL has valid image extension")
-  @Description("The returned image URL should end with a valid image file extension")
+  @DisplayName("🖼️ URL da imagem tem extensão válida (.jpg, .png, etc.)")
+  @Description(
+      "A URL retornada deve terminar com uma extensão de arquivo de imagem válida, "
+          + "como .jpg, .png ou .gif.")
   @Severity(SeverityLevel.NORMAL)
-  @Story("Single Random Image")
+  @Story("🎯 Imagem Aleatória Única")
   void randomImageHasValidExtension() {
     // Act
     Response response = client.getRandomImage();
@@ -70,10 +75,12 @@ class RandomImageTest {
   }
 
   @Test
-  @DisplayName("Random image response matches JSON schema")
-  @Description("The response body should conform to the expected JSON schema")
+  @DisplayName("📄 Resposta segue o contrato JSON Schema")
+  @Description(
+      "O corpo da resposta deve estar em conformidade com o JSON Schema esperado, "
+          + "validando o contrato da API para evitar breaking changes.")
   @Severity(SeverityLevel.CRITICAL)
-  @Story("Contract Validation")
+  @Story("📄 Validação de Contrato")
   void responseMatchesJsonSchema() {
     // Act
     Response response = client.getRandomImage();
