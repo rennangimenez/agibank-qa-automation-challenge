@@ -25,13 +25,29 @@ jobs:
             --exclude 'scripts/' \
             infra/ /opt/monitoring/
 
-      - name: Restart Grafana to pick up dashboard changes
+      - name: Ensure monitoring stack is running
         run: |
           cd /opt/monitoring
           sudo docker compose up -d --force-recreate grafana
-          sleep 5
-          curl -sf http://localhost:3000/api/health && echo "Grafana healthy" || echo "Grafana not ready yet"
-        continue-on-error: true
+          sudo docker compose up -d influxdb
+          echo "Waiting for InfluxDB..."
+          for i in $(seq 1 15); do
+            if curl -sf http://localhost:8086/ping > /dev/null 2>&1; then
+              echo "InfluxDB is healthy"
+              break
+            fi
+            echo "  attempt $i/15..."
+            sleep 2
+          done
+          echo "Waiting for Grafana..."
+          for i in $(seq 1 10); do
+            if curl -sf http://localhost:3000/api/health > /dev/null 2>&1; then
+              echo "Grafana is healthy"
+              break
+            fi
+            echo "  attempt $i/10..."
+            sleep 2
+          done
 
   api-tests:
     name: API Tests

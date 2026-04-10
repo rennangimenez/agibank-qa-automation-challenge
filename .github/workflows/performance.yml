@@ -29,19 +29,24 @@ jobs:
           sudo mkdir -p /opt/monitoring
           sudo rsync -avz --delete --exclude 'scripts/' infra/ /opt/monitoring/
           cd /opt/monitoring && sudo docker compose up -d
-          sleep 5
 
       - name: Record start time
         run: echo "JOB_START=$(date +%s)" >> $GITHUB_ENV
 
-      - name: Verify InfluxDB is reachable
+      - name: Wait for InfluxDB to be ready
         run: |
-          if curl -sf http://localhost:8086/ping; then
-            echo "InfluxDB is up - JMeter will send real-time metrics"
-          else
-            echo "WARNING: InfluxDB not reachable - JMeter will run without real-time metrics"
-          fi
-        continue-on-error: true
+          echo "Waiting for InfluxDB..."
+          for i in $(seq 1 20); do
+            if curl -sf http://localhost:8086/ping > /dev/null 2>&1; then
+              echo "InfluxDB is healthy after $i attempt(s)"
+              curl -sf "http://localhost:8086/query?q=SHOW+DATABASES" | grep -q jmeter && echo "Database 'jmeter' exists" || echo "WARNING: database 'jmeter' not found yet"
+              exit 0
+            fi
+            echo "  attempt $i/20 - waiting..."
+            sleep 3
+          done
+          echo "ERROR: InfluxDB not reachable after 60s"
+          exit 1
 
       - name: Run JMeter Tests
         run: ./mvnw clean verify -pl performance-tests -Djmeter.test=${{ env.TEST_PLAN }}
