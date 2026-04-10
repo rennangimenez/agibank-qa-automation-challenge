@@ -33,24 +33,6 @@ jobs:
           curl -sf http://localhost:3000/api/health && echo "Grafana healthy" || echo "Grafana not ready yet"
         continue-on-error: true
 
-  deploy-docs:
-    name: Deploy Documentation
-    needs: deploy-monitoring
-    runs-on: self-hosted
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Build HTML docs from Markdown
-        run: |
-          chmod +x infra/scripts/build-docs.sh
-          bash infra/scripts/build-docs.sh
-
-      - name: Deploy docs to Nginx
-        run: |
-          sudo mkdir -p /srv/apps/agibank-challenge-reports/docs
-          rsync -avz --delete docs/html/ /srv/apps/agibank-challenge-reports/docs/
-
   api-tests:
     name: API Tests
     needs: deploy-monitoring
