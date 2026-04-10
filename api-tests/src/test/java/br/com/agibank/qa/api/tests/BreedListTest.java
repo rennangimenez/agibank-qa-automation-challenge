@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import br.com.agibank.qa.api.client.DogApiClient;
+import br.com.agibank.qa.api.fixtures.BreedData;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -33,8 +34,10 @@ class BreedListTest {
   @Description("GET /breeds/list/all should return status 200 and status field 'success'")
   @Severity(SeverityLevel.BLOCKER)
   void listAllBreedsReturns200() {
+    // Act
     Response response = client.listAllBreeds();
 
+    // Assert
     assertAll(
         () -> assertEquals(200, response.statusCode(), "Status code should be 200"),
         () ->
@@ -47,14 +50,14 @@ class BreedListTest {
   @Description("The breed list should contain well-known breeds like bulldog, labrador, and hound")
   @Severity(SeverityLevel.CRITICAL)
   void breedListContainsKnownBreeds() {
+    // Act
     Response response = client.listAllBreeds();
     Map<String, Object> breeds = response.jsonPath().getMap("message");
 
-    assertAll(
-        () -> assertFalse(breeds.isEmpty(), "Breed list should not be empty"),
-        () -> assertTrue(breeds.containsKey("bulldog"), "Should contain bulldog"),
-        () -> assertTrue(breeds.containsKey("labrador"), "Should contain labrador"),
-        () -> assertTrue(breeds.containsKey("hound"), "Should contain hound"));
+    // Assert
+    assertFalse(breeds.isEmpty(), "Breed list should not be empty");
+    BreedData.KNOWN_BREEDS.forEach(
+        expected -> assertTrue(breeds.containsKey(expected), "Should contain " + expected));
   }
 
   @Test
@@ -62,9 +65,11 @@ class BreedListTest {
   @Description("Each breed's sub-breeds should be a list (even if empty)")
   @Severity(SeverityLevel.NORMAL)
   void subBreedsAreArrays() {
+    // Act
     Response response = client.listAllBreeds();
     Map<String, Object> breeds = response.jsonPath().getMap("message");
 
+    // Assert
     breeds.forEach(
         (breed, subBreeds) ->
             assertInstanceOf(
@@ -78,8 +83,10 @@ class BreedListTest {
   @Description("The response body should conform to the expected JSON schema")
   @Severity(SeverityLevel.CRITICAL)
   void responseMatchesJsonSchema() {
+    // Act
     Response response = client.listAllBreeds();
 
+    // Assert
     assertThat(
         response.body().asString(), matchesJsonSchemaInClasspath("schemas/breed-list-schema.json"));
   }

@@ -3,6 +3,7 @@ package br.com.agibank.qa.api.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import br.com.agibank.qa.api.client.DogApiClient;
+import br.com.agibank.qa.api.fixtures.BreedData;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -30,9 +31,14 @@ class BreedImagesTest {
   @Description("GET /breed/hound/images should return a list of valid image URLs")
   @Severity(SeverityLevel.CRITICAL)
   void getImagesForValidBreed() {
-    Response response = client.getBreedImages("hound");
+    // Arrange
+    String breed = BreedData.VALID_BREED;
+
+    // Act
+    Response response = client.getBreedImages(breed);
     List<String> images = response.jsonPath().getList("message");
 
+    // Assert
     assertAll(
         () -> assertEquals(200, response.statusCode(), "Status code should be 200"),
         () -> assertEquals("success", response.jsonPath().getString("status")),
@@ -44,13 +50,18 @@ class BreedImagesTest {
   @Description("All returned URLs should start with https://images.dog.ceo/breeds/")
   @Severity(SeverityLevel.NORMAL)
   void imageUrlsAreValid() {
-    Response response = client.getBreedImages("hound");
+    // Arrange
+    String breed = BreedData.VALID_BREED;
+
+    // Act
+    Response response = client.getBreedImages(breed);
     List<String> images = response.jsonPath().getList("message");
 
+    // Assert
     images.forEach(
         url ->
             assertTrue(
-                url.startsWith("https://images.dog.ceo/breeds/"),
+                url.startsWith(BreedData.IMAGE_URL_PREFIX),
                 "URL should point to images.dog.ceo: " + url));
   }
 
@@ -59,10 +70,14 @@ class BreedImagesTest {
   @Description("Image URLs for 'hound' should contain 'hound' in the path")
   @Severity(SeverityLevel.NORMAL)
   void imageUrlsContainBreedName() {
-    String breed = "hound";
+    // Arrange
+    String breed = BreedData.VALID_BREED;
+
+    // Act
     Response response = client.getBreedImages(breed);
     List<String> images = response.jsonPath().getList("message");
 
+    // Assert
     images.forEach(url -> assertTrue(url.contains(breed), "URL should contain breed name: " + url));
   }
 
@@ -71,8 +86,13 @@ class BreedImagesTest {
   @Description("GET /breed/invalidbreed999/images should return status 404 with error message")
   @Severity(SeverityLevel.CRITICAL)
   void getImagesForInvalidBreedReturns404() {
-    Response response = client.getBreedImages("invalidbreed999");
+    // Arrange
+    String breed = BreedData.INVALID_BREED;
 
+    // Act
+    Response response = client.getBreedImages(breed);
+
+    // Assert
     assertAll(
         () -> assertEquals(404, response.statusCode(), "Status code should be 404"),
         () ->

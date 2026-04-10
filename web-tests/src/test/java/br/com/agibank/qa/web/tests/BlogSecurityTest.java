@@ -3,6 +3,8 @@ package br.com.agibank.qa.web.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import br.com.agibank.qa.web.base.BaseTest;
+import br.com.agibank.qa.web.fixtures.ExpectedResults;
+import br.com.agibank.qa.web.fixtures.SearchData;
 import br.com.agibank.qa.web.pages.BlogHomePage;
 import br.com.agibank.qa.web.pages.SearchResultsPage;
 import io.qameta.allure.Description;
@@ -10,6 +12,8 @@ import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +27,6 @@ class BlogSecurityTest extends BaseTest {
   @BeforeEach
   void setUp() {
     homePage = new BlogHomePage(page);
-    homePage.navigate();
   }
 
   @Test
@@ -31,9 +34,15 @@ class BlogSecurityTest extends BaseTest {
   @Description("Submitting a SQL injection payload should not cause errors or expose data")
   @Severity(SeverityLevel.CRITICAL)
   void sqlInjectionInSearchIsHandled() {
-    homePage.searchFor("'; DROP TABLE users;--");
+    // Arrange
+    String payload = SearchData.SQL_INJECTION;
+
+    // Act
+    homePage.navigate();
+    homePage.searchFor(payload);
     SearchResultsPage resultsPage = new SearchResultsPage(page);
 
+    // Assert
     assertAll(
         "SQL Injection safety",
         () -> assertTrue(resultsPage.urlContainsSearchParam(), "URL should contain search param"),
@@ -53,18 +62,26 @@ class BlogSecurityTest extends BaseTest {
           + "but the script must never actually execute.")
   @Severity(SeverityLevel.CRITICAL)
   void xssAttemptDoesNotExecuteScripts() {
-    java.util.List<String> dialogs = new java.util.ArrayList<>();
+    // Arrange
+    String payload = SearchData.XSS_SCRIPT;
+    List<String> dialogs = new ArrayList<>();
     page.onDialog(
         dialog -> {
           dialogs.add(dialog.message());
           dialog.dismiss();
         });
 
-    homePage.searchFor("<script>alert('xss')</script>");
+    // Act
+    homePage.navigate();
+    homePage.searchFor(payload);
 
+    // Assert
     assertAll(
         "XSS execution prevention",
-        () -> assertTrue(page.url().contains("s="), "URL should contain search param"),
+        () ->
+            assertTrue(
+                page.url().contains(ExpectedResults.SEARCH_PARAM_KEY),
+                "URL should contain search param"),
         () ->
             assertTrue(
                 dialogs.isEmpty(),
@@ -80,11 +97,16 @@ class BlogSecurityTest extends BaseTest {
           + "This is a stored/reflected HTML injection vulnerability.")
   @Severity(SeverityLevel.CRITICAL)
   void htmlInjectionRendersInDom() {
-    homePage.searchFor("<h1>Injected</h1>");
+    // Arrange
+    String payload = SearchData.HTML_INJECTION;
+
+    // Act
+    homePage.navigate();
+    homePage.searchFor(payload);
     SearchResultsPage resultsPage = new SearchResultsPage(page);
+    int injectedH1Count = page.locator(ExpectedResults.INJECTED_H1_SELECTOR).count();
 
-    int injectedH1Count = page.locator("h1:has-text('Injected')").count();
-
+    // Assert
     assertAll(
         "HTML Injection finding documentation",
         () -> assertTrue(resultsPage.urlContainsSearchParam(), "URL should contain search param"),
@@ -99,9 +121,14 @@ class BlogSecurityTest extends BaseTest {
   @Description("Submitting a 5000-character search term should be handled gracefully")
   @Severity(SeverityLevel.NORMAL)
   void extremelyLongSearchInputIsHandled() {
-    String longInput = "a".repeat(5000);
-    homePage.searchFor(longInput);
+    // Arrange
+    String payload = SearchData.longInput();
 
+    // Act
+    homePage.navigate();
+    homePage.searchFor(payload);
+
+    // Assert
     assertAll(
         "Long input handling",
         () -> assertNotNull(page.title(), "Page should still have a title"),
@@ -113,9 +140,15 @@ class BlogSecurityTest extends BaseTest {
   @Description("Characters like <, >, &, \", ' should be properly encoded and handled")
   @Severity(SeverityLevel.NORMAL)
   void specialCharactersInSearchAreHandled() {
-    homePage.searchFor("<>&\"'%\\");
+    // Arrange
+    String payload = SearchData.SPECIAL_CHARACTERS;
+
+    // Act
+    homePage.navigate();
+    homePage.searchFor(payload);
     SearchResultsPage resultsPage = new SearchResultsPage(page);
 
+    // Assert
     assertAll(
         "Special characters handling",
         () -> assertTrue(resultsPage.urlContainsSearchParam(), "URL should contain search param"),

@@ -1,6 +1,8 @@
 name: Performance Tests
 
 on:
+  schedule:
+    - cron: '0 3 * * *'
   workflow_dispatch:
     inputs:
       test-plan:
@@ -14,8 +16,10 @@ on:
 
 jobs:
   performance:
-    name: Performance Tests - ${{ github.event.inputs.test-plan }}
+    name: Performance Tests - ${{ github.event.inputs.test-plan || 'blazedemo-load-test' }}
     runs-on: self-hosted
+    env:
+      TEST_PLAN: ${{ github.event.inputs.test-plan || 'blazedemo-load-test' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,7 +44,7 @@ jobs:
         continue-on-error: true
 
       - name: Run JMeter Tests
-        run: ./mvnw clean verify -pl performance-tests -Djmeter.test=${{ github.event.inputs.test-plan }}
+        run: ./mvnw clean verify -pl performance-tests -Djmeter.test=${{ env.TEST_PLAN }}
 
       - name: Deploy Performance Report
         if: always()

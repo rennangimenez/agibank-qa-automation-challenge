@@ -3,6 +3,7 @@ package br.com.agibank.qa.api.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import br.com.agibank.qa.api.client.DogApiClient;
+import br.com.agibank.qa.api.fixtures.BreedData;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -30,8 +31,13 @@ class EdgeCaseTest {
   @Description("Breed names containing @, #, $ should return a 404 error")
   @Severity(SeverityLevel.NORMAL)
   void breedWithSpecialCharactersReturns404() {
-    Response response = client.getBreedImages("bull@dog#123");
+    // Arrange
+    String breed = BreedData.SPECIAL_CHARS_BREED;
 
+    // Act
+    Response response = client.getBreedImages(breed);
+
+    // Assert
     assertAll(
         () -> assertEquals(404, response.statusCode(), "Should return 404 for special characters"),
         () ->
@@ -44,8 +50,13 @@ class EdgeCaseTest {
   @Description("Using a numeric value as breed name should return 404")
   @Severity(SeverityLevel.NORMAL)
   void numericBreedNameReturns404() {
-    Response response = client.getBreedImages("12345");
+    // Arrange
+    String breed = BreedData.NUMERIC_BREED;
 
+    // Act
+    Response response = client.getBreedImages(breed);
+
+    // Assert
     assertEquals(404, response.statusCode(), "Should return 404 for numeric breed");
   }
 
@@ -54,9 +65,13 @@ class EdgeCaseTest {
   @Description("A breed name exceeding 100 characters should return 404 gracefully")
   @Severity(SeverityLevel.NORMAL)
   void veryLongBreedNameReturns404() {
-    String longBreed = "a".repeat(200);
-    Response response = client.getBreedImages(longBreed);
+    // Arrange
+    String breed = BreedData.longBreedName();
 
+    // Act
+    Response response = client.getBreedImages(breed);
+
+    // Assert
     assertTrue(
         response.statusCode() == 404 || response.statusCode() == 414,
         "Should return 404 or 414 for very long breed name, got " + response.statusCode());
@@ -67,8 +82,13 @@ class EdgeCaseTest {
   @Description("Unicode characters in breed name should be handled without server crash")
   @Severity(SeverityLevel.NORMAL)
   void unicodeBreedNameIsHandled() {
-    Response response = client.getBreedImages("café☕🐕");
+    // Arrange
+    String breed = BreedData.UNICODE_BREED;
 
+    // Act
+    Response response = client.getBreedImages(breed);
+
+    // Assert
     assertTrue(
         response.statusCode() < 500,
         "Should not return 5xx for unicode breed name, got " + response.statusCode());
@@ -79,13 +99,18 @@ class EdgeCaseTest {
   @Description("GET /breeds/image/random/5 should return exactly 5 image URLs")
   @Severity(SeverityLevel.CRITICAL)
   void multipleRandomImagesReturnsCorrectCount() {
-    Response response = client.getMultipleRandomImages(5);
+    // Arrange
+    int count = BreedData.RANDOM_IMAGE_COUNT;
+
+    // Act
+    Response response = client.getMultipleRandomImages(count);
     List<String> images = response.jsonPath().getList("message");
 
+    // Assert
     assertAll(
         () -> assertEquals(200, response.statusCode(), "Status code should be 200"),
         () -> assertEquals("success", response.jsonPath().getString("status")),
-        () -> assertEquals(5, images.size(), "Should return exactly 5 images"));
+        () -> assertEquals(count, images.size(), "Should return exactly " + count + " images"));
   }
 
   @Test
@@ -93,8 +118,10 @@ class EdgeCaseTest {
   @Description("Requesting 0 random images should be handled gracefully")
   @Severity(SeverityLevel.NORMAL)
   void randomImagesWithZeroCount() {
+    // Act
     Response response = client.getMultipleRandomImages(0);
 
+    // Assert
     assertTrue(
         response.statusCode() == 200 || response.statusCode() == 400,
         "Should return 200 or 400 for zero count, got " + response.statusCode());
@@ -105,8 +132,10 @@ class EdgeCaseTest {
   @Description("Requesting a negative number of random images should not cause a server error")
   @Severity(SeverityLevel.NORMAL)
   void randomImagesWithNegativeCount() {
+    // Act
     Response response = client.getMultipleRandomImages(-1);
 
+    // Assert
     assertTrue(
         response.statusCode() < 500,
         "Should not return 5xx for negative count, got " + response.statusCode());
@@ -117,16 +146,23 @@ class EdgeCaseTest {
   @Description("GET /breed/hound/afghan/images should return images for the afghan hound sub-breed")
   @Severity(SeverityLevel.CRITICAL)
   void subBreedImagesReturnsResults() {
-    Response response = client.getSubBreedImages("hound", "afghan");
+    // Arrange
+    String parent = BreedData.VALID_SUB_BREED_PARENT;
+    String sub = BreedData.VALID_SUB_BREED;
+
+    // Act
+    Response response = client.getSubBreedImages(parent, sub);
     List<String> images = response.jsonPath().getList("message");
 
+    // Assert
     assertAll(
         () -> assertEquals(200, response.statusCode(), "Status code should be 200"),
         () -> assertEquals("success", response.jsonPath().getString("status")),
         () -> assertFalse(images.isEmpty(), "Image list should not be empty"),
         () ->
             assertTrue(
-                images.get(0).contains("hound-afghan"), "Image URL should contain sub-breed path"));
+                images.get(0).contains(parent + "-" + sub),
+                "Image URL should contain sub-breed path"));
   }
 
   @Test
@@ -134,8 +170,14 @@ class EdgeCaseTest {
   @Description("GET /breed/hound/invalidsubbreed/images should return 404")
   @Severity(SeverityLevel.NORMAL)
   void invalidSubBreedReturns404() {
-    Response response = client.getSubBreedImages("hound", "invalidsubbreed999");
+    // Arrange
+    String parent = BreedData.VALID_SUB_BREED_PARENT;
+    String sub = BreedData.INVALID_SUB_BREED;
 
+    // Act
+    Response response = client.getSubBreedImages(parent, sub);
+
+    // Assert
     assertAll(
         () -> assertEquals(404, response.statusCode(), "Status code should be 404"),
         () ->

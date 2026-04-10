@@ -3,6 +3,7 @@ package br.com.agibank.qa.api.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import br.com.agibank.qa.api.client.DogApiClient;
+import br.com.agibank.qa.api.fixtures.SecurityPayloads;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -29,8 +30,13 @@ class SecurityTest {
   @Description("Passing SQL payload as breed name should return 404 without database error traces")
   @Severity(SeverityLevel.CRITICAL)
   void sqlInjectionInBreedParam() {
-    Response response = client.getBreedImages("' OR '1'='1");
+    // Arrange
+    String payload = SecurityPayloads.SQL_INJECTION;
 
+    // Act
+    Response response = client.getBreedImages(payload);
+
+    // Assert
     assertAll(
         "SQL Injection safety",
         () ->
@@ -52,8 +58,13 @@ class SecurityTest {
   @Description("Using ../ sequences should not expose file system paths or server internals")
   @Severity(SeverityLevel.CRITICAL)
   void pathTraversalInBreedParam() {
-    Response response = client.getBreedImages("../../../etc/passwd");
+    // Arrange
+    String payload = SecurityPayloads.PATH_TRAVERSAL;
 
+    // Act
+    Response response = client.getBreedImages(payload);
+
+    // Assert
     assertAll(
         "Path traversal safety",
         () ->
@@ -78,10 +89,11 @@ class SecurityTest {
           + "removing or suppressing the header in the server configuration.")
   @Severity(SeverityLevel.NORMAL)
   void serverInfoExposedInHeaders() {
+    // Act
     Response response = client.listAllBreeds();
-
     String xPoweredBy = response.header("X-Powered-By");
 
+    // Assert
     assertAll(
         "Server info disclosure findings",
         () -> assertNotNull(xPoweredBy, "X-Powered-By header IS present (documenting finding)"),
@@ -96,8 +108,13 @@ class SecurityTest {
   @Description("Script tags in the breed parameter should not be echoed back in the response body")
   @Severity(SeverityLevel.CRITICAL)
   void xssPayloadInBreedParam() {
-    Response response = client.getBreedImages("<script>alert(1)</script>");
+    // Arrange
+    String payload = SecurityPayloads.XSS_SCRIPT;
 
+    // Act
+    Response response = client.getBreedImages(payload);
+
+    // Assert
     assertAll(
         "XSS reflection check",
         () ->
@@ -111,9 +128,13 @@ class SecurityTest {
   @Description("Sending requests with unexpected Content-Type should not cause server errors")
   @Severity(SeverityLevel.NORMAL)
   void maliciousContentTypeIsHandled() {
-    Response response =
-        client.getWithCustomHeaders("application/xml; <!ENTITY xxe SYSTEM 'file:///etc/passwd'>");
+    // Arrange
+    String maliciousType = SecurityPayloads.MALICIOUS_CONTENT_TYPE;
 
+    // Act
+    Response response = client.getWithCustomHeaders(maliciousType);
+
+    // Assert
     assertTrue(
         response.statusCode() < 500,
         "Server should not return 5xx for malicious Content-Type, got " + response.statusCode());
@@ -124,9 +145,13 @@ class SecurityTest {
   @Description("Sending an extremely long header value should be rejected gracefully")
   @Severity(SeverityLevel.NORMAL)
   void oversizedHeaderIsHandled() {
-    String longValue = "A".repeat(8000);
-    Response response = client.getWithCustomHeader("X-Custom-Test", longValue);
+    // Arrange
+    String headerValue = SecurityPayloads.oversizedHeaderValue();
 
+    // Act
+    Response response = client.getWithCustomHeader("X-Custom-Test", headerValue);
+
+    // Assert
     assertTrue(
         response.statusCode() < 500 || response.statusCode() == 502,
         "Server should handle oversized headers gracefully, got " + response.statusCode());

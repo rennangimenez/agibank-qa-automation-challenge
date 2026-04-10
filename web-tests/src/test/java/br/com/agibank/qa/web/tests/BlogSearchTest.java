@@ -3,6 +3,7 @@ package br.com.agibank.qa.web.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import br.com.agibank.qa.web.base.BaseTest;
+import br.com.agibank.qa.web.fixtures.SearchData;
 import br.com.agibank.qa.web.pages.BlogHomePage;
 import br.com.agibank.qa.web.pages.SearchResultsPage;
 import io.qameta.allure.Description;
@@ -30,11 +31,15 @@ class BlogSearchTest extends BaseTest {
   @Description("Searching for 'empréstimo' should return articles with titles and links")
   @Severity(SeverityLevel.CRITICAL)
   void searchWithValidTermReturnsResults() {
-    homePage.navigate();
-    homePage.searchFor("empréstimo");
+    // Arrange
+    String searchTerm = SearchData.VALID_TERM;
 
+    // Act
+    homePage.navigate();
+    homePage.searchFor(searchTerm);
     SearchResultsPage resultsPage = new SearchResultsPage(page);
 
+    // Assert
     assertAll(
         "Search results validation",
         () ->
@@ -42,7 +47,7 @@ class BlogSearchTest extends BaseTest {
         () -> assertTrue(resultsPage.hasResults(), "Should display at least one result"),
         () ->
             assertTrue(
-                resultsPage.getResultsHeadingText().contains("empréstimo"),
+                resultsPage.getResultsHeadingText().contains(searchTerm),
                 "Heading should contain the search term"),
         () ->
             assertFalse(
@@ -56,11 +61,15 @@ class BlogSearchTest extends BaseTest {
       "Searching for a nonsense term should display zero articles and a no-results message")
   @Severity(SeverityLevel.NORMAL)
   void searchWithNonexistentTermShowsNoResults() {
-    homePage.navigate();
-    homePage.searchFor("xyzqwerty999");
+    // Arrange
+    String searchTerm = SearchData.NONEXISTENT_TERM;
 
+    // Act
+    homePage.navigate();
+    homePage.searchFor(searchTerm);
     SearchResultsPage resultsPage = new SearchResultsPage(page);
 
+    // Assert
     assertAll(
         "No results validation",
         () ->
@@ -76,8 +85,10 @@ class BlogSearchTest extends BaseTest {
   @Description("The search icon and form elements should exist in the page DOM")
   @Severity(SeverityLevel.NORMAL)
   void searchComponentsArePresentOnPage() {
+    // Act
     homePage.navigate();
 
+    // Assert
     assertAll(
         "Search UI components validation",
         () -> assertTrue(homePage.isLoaded(), "Page should load successfully"),
