@@ -117,10 +117,8 @@ jobs:
         if: always()
         run: |
           REPORT_DIR="api-tests/target/allure-report"
-          PLUGIN_DIR="$REPORT_DIR/plugins/custom-logo-plugin/static"
-          mkdir -p "$PLUGIN_DIR"
-          cp infra/allure/styles.css "$PLUGIN_DIR/styles.css"
-          cp infra/allure/allure-plugin.yml "$REPORT_DIR/plugins/custom-logo-plugin/allure-plugin.yml"
+          cp infra/allure/styles.css "$REPORT_DIR/dark-theme.css"
+          sed -i 's|</head>|<link rel="stylesheet" href="dark-theme.css"></head>|' "$REPORT_DIR/index.html"
 
       - name: Deploy API Report
         if: always()
@@ -228,10 +226,8 @@ jobs:
         if: always()
         run: |
           REPORT_DIR="web-tests/target/allure-report"
-          PLUGIN_DIR="$REPORT_DIR/plugins/custom-logo-plugin/static"
-          mkdir -p "$PLUGIN_DIR"
-          cp infra/allure/styles.css "$PLUGIN_DIR/styles.css"
-          cp infra/allure/allure-plugin.yml "$REPORT_DIR/plugins/custom-logo-plugin/allure-plugin.yml"
+          cp infra/allure/styles.css "$REPORT_DIR/dark-theme.css"
+          sed -i 's|</head>|<link rel="stylesheet" href="dark-theme.css"></head>|' "$REPORT_DIR/index.html"
 
       - name: Deploy Web Report
         if: always()
