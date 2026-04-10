@@ -7,47 +7,39 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 public class ScreenshotOnResultExtension implements AfterTestExecutionCallback {
 
-  private static final ExtensionContext.Namespace NS =
-      ExtensionContext.Namespace.create(ScreenshotOnResultExtension.class);
+  private static final ThreadLocal<Page> CURRENT_PAGE = new ThreadLocal<>();
+  private static final ThreadLocal<Boolean> TRACING_STARTED = new ThreadLocal<>();
 
-  public static void registerPage(ExtensionContext context, Page page) {
-    context.getStore(NS).put("page", page);
+  public static void setPage(Page page) {
+    CURRENT_PAGE.set(page);
   }
 
-  public static void registerTracingStarted(ExtensionContext context) {
-    context.getStore(NS).put("tracing", Boolean.TRUE);
-  }
-
-  private Optional<Page> getPage(ExtensionContext context) {
-    return Optional.ofNullable((Page) context.getStore(NS).get("page"));
-  }
-
-  private boolean isTracingStarted(ExtensionContext context) {
-    return Boolean.TRUE.equals(context.getStore(NS).get("tracing"));
+  public static void setTracingStarted(boolean started) {
+    TRACING_STARTED.set(started);
   }
 
   @Override
   public void afterTestExecution(ExtensionContext context) {
+    Page page = CURRENT_PAGE.get();
+    if (page == null) {
+      return;
+    }
+
     boolean failed = context.getExecutionException().isPresent();
 
-    getPage(context)
-        .ifPresent(
-            page -> {
-              if (failed) {
-                attachScreenshot(page, "Screenshot (Failure)");
-              } else {
-                attachScreenshot(page, "Screenshot (Success)");
-              }
-              Allure.addAttachment("Final URL", "text/plain", page.url());
-              Allure.addAttachment("Page Title", "text/plain", page.title());
-              stopTracing(context, failed);
-            });
+    if (failed) {
+      attachScreenshot(page, "Screenshot (Failure)");
+    } else {
+      attachScreenshot(page, "Screenshot (Success)");
+    }
+    Allure.addAttachment("Final URL", "text/plain", page.url());
+    Allure.addAttachment("Page Title", "text/plain", page.title());
+    stopTracing(page, failed);
   }
 
   private void attachScreenshot(Page page, String name) {
@@ -60,36 +52,28 @@ public class ScreenshotOnResultExtension implements AfterTestExecutionCallback {
     }
   }
 
-  private void stopTracing(ExtensionContext context, boolean attach) {
-    if (!isTracingStarted(context)) {
+  private void stopTracing(Page page, boolean attach) {
+    if (!Boolean.TRUE.equals(TRACING_STARTED.get())) {
       return;
     }
-    getPage(context)
-        .ifPresent(
-            page -> {
-              Path tracePath = null;
-              try {
-                tracePath = Files.createTempFile("trace-", ".zip");
-                page.context().tracing().stop(new Tracing.StopOptions().setPath(tracePath));
-                if (attach) {
-                  Allure.addAttachment(
-                      "Playwright Trace",
-                      "application/zip",
-                      Files.newInputStream(tracePath),
-                      ".zip");
-                }
-              } catch (Exception e) {
-                Allure.addAttachment(
-                    "Trace capture failed", "text/plain", "Could not capture trace: " + e);
-              } finally {
-                if (tracePath != null) {
-                  try {
-                    Files.deleteIfExists(tracePath);
-                  } catch (IOException ignored) {
-                  }
-                }
-                context.getStore(NS).remove("tracing");
-              }
-            });
+    Path tracePath = null;
+    try {
+      tracePath = Files.createTempFile("trace-", ".zip");
+      page.context().tracing().stop(new Tracing.StopOptions().setPath(tracePath));
+      if (attach) {
+        Allure.addAttachment(
+            "Playwright Trace", "application/zip", Files.newInputStream(tracePath), ".zip");
+      }
+    } catch (Exception e) {
+      Allure.addAttachment("Trace capture failed", "text/plain", "Could not capture trace: " + e);
+    } finally {
+      if (tracePath != null) {
+        try {
+          Files.deleteIfExists(tracePath);
+        } catch (IOException ignored) {
+        }
+      }
+      TRACING_STARTED.remove();
+    }
   }
 }

@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 @ExtendWith(ScreenshotOnResultExtension.class)
 public abstract class BaseTest {
@@ -39,7 +38,7 @@ public abstract class BaseTest {
   }
 
   @BeforeEach
-  void createContext(TestInfo testInfo, ExtensionContext extensionContext) {
+  void createContext(TestInfo testInfo) {
     context = browser.newContext(new Browser.NewContextOptions().setViewportSize(1920, 1080));
 
     context
@@ -52,8 +51,8 @@ public abstract class BaseTest {
 
     page = context.newPage();
 
-    ScreenshotOnResultExtension.registerPage(extensionContext, page);
-    ScreenshotOnResultExtension.registerTracingStarted(extensionContext);
+    ScreenshotOnResultExtension.setPage(page);
+    ScreenshotOnResultExtension.setTracingStarted(true);
   }
 
   @AfterEach
