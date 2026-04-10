@@ -104,8 +104,9 @@ A execucao na VPS fornece uma perspectiva diferente da local:
 
 Durante a execucao na VPS, o Grafana forneceu dashboards em tempo real:
 
-- **JMeter Dashboard:** Response times (avg, p90, p95, p99), throughput, error rate, active threads
-- **Node Exporter Dashboard:** CPU, memoria, disco e rede da VPS durante o teste
+- **Performance (JMeter):** Response times (avg, p90, p95, p99), throughput, error rate, active threads, errors by transaction
+- **Pipeline Health:** Duracao e status do pipeline de performance, feedback time
+- **Quality Overview:** Contexto dos resultados de testes funcionais (web/api) para correlacao
 - **URL:** https://rennangimenez.com/grafana/
 
 ---
@@ -129,9 +130,9 @@ Durante a execucao na VPS, o Grafana forneceu dashboards em tempo real:
 
 ### 7.2 Ferramentas de Monitoramento
 
-- **InfluxDB:** Armazena metricas JMeter em tempo real via Backend Listener
-- **Prometheus + Node Exporter:** Metricas de infraestrutura da VPS
-- **Grafana:** Visualizacao unificada de performance + infraestrutura
+- **InfluxDB:** Armazena metricas JMeter em tempo real via Backend Listener + metricas de pipeline CI/CD
+- **Grafana:** 3 dashboards provisionados como codigo (Quality Overview, Performance, Pipeline Health)
+- **Prometheus:** Coleta de metricas de infraestrutura
 
 ---
 

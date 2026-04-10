@@ -44,7 +44,7 @@ agibank-qa-automation-challenge/
 - **RestAssured with Client Layer**: Separates HTTP logic from test assertions following SRP; `DogApiClient` encapsulates all API calls, making tests readable and maintainable.
 - **JSON Schema Validation**: Validates API contract structure beyond just status codes, catching breaking changes early.
 - **Maven Multi-Module**: Each test type is an independent module with its own dependencies, avoiding classpath conflicts while sharing common configuration through the parent POM.
-- **Grafana + InfluxDB**: JMeter sends real-time metrics via Backend Listener, enabling live performance monitoring during test execution.
+- **Grafana + InfluxDB**: JMeter sends real-time metrics via Backend Listener; CI pushes Allure results and pipeline metrics to InfluxDB, enabling 3 focused dashboards (Quality, Performance, Pipeline Health).
 - **Security-First Approach**: Security tests document real findings (HTML injection, info disclosure) as positive assertions, demonstrating vulnerability detection capability.
 
 ---
@@ -168,9 +168,11 @@ Reports are automatically deployed to the VPS on every CI run:
 
 ### Grafana Dashboards
 
-- **JMeter Performance**: Real-time response times, throughput, error rate, active threads
-- **VPS Infrastructure**: CPU, memory, disk, network (via Prometheus + Node Exporter)
-- **CI/CD Test Results**: Pass/fail trends, suite duration, flakiness history
+| Dashboard                  | Purpose                                                                               |
+| -------------------------- | ------------------------------------------------------------------------------------- |
+| Quality Overview           | Web/API test results separated, pass rates, trends, flaky test tracking               |
+| Performance (JMeter)       | Real-time latency (avg/p90/p95/p99), throughput, error rate, per-transaction analysis |
+| Pipeline & Delivery Health | CI/CD success rate, job durations, feedback time, failure analysis                    |
 
 ### Local Reports
 
@@ -191,16 +193,25 @@ The project includes a full monitoring stack deployed on the VPS via Docker Comp
 
 ```
 infra/
-├── docker-compose.yml              Grafana + InfluxDB + Prometheus + Node Exporter
-├── prometheus/prometheus.yml        Prometheus scrape config
+├── docker-compose.yml                Grafana + InfluxDB + Prometheus
+├── prometheus/prometheus.yml          Prometheus scrape config
 ├── grafana/
-│   ├── provisioning/               Auto-configured datasources and dashboard providers
-│   └── dashboards/                 Pre-built dashboard JSONs
-├── scripts/push-allure-metrics.sh  Pushes Allure results to InfluxDB after CI runs
-└── setup-vps.sh                    One-command VPS setup script
+│   ├── provisioning/                  Auto-configured datasources and dashboard providers
+│   └── dashboards/
+│       ├── quality-overview.json      Web/API test results, pass rates, flaky tracking
+│       ├── performance.json           JMeter latency, throughput, error analysis
+│       └── pipeline-health.json       CI/CD success rate, job durations, feedback time
+└── scripts/
+    ├── push-allure-metrics.sh         Pushes test results + stability metrics to InfluxDB
+    └── push-pipeline-metrics.sh       Pushes CI job duration + status to InfluxDB
 ```
 
-JMeter test plans include an InfluxDB Backend Listener that sends metrics in real-time during execution, enabling live Grafana dashboards.
+**Data flow:**
+
+- JMeter sends real-time metrics to InfluxDB via Backend Listener during execution
+- CI workflows push Allure test results (pass/fail/flaky) after each run
+- CI workflows push pipeline metrics (duration, status) for delivery health tracking
+- Dashboards are provisioned as code and auto-deployed via CI
 
 ---
 
@@ -208,10 +219,10 @@ JMeter test plans include an InfluxDB Backend Listener that sends metrics in rea
 
 ### Workflows
 
-| Workflow          | Trigger                    | What it does                                                             |
-| ----------------- | -------------------------- | ------------------------------------------------------------------------ |
-| `ci.yml`          | Push to `main`, PRs        | Runs API + Web tests, deploys Allure reports, pushes metrics to InfluxDB |
-| `performance.yml` | Manual (workflow_dispatch) | Runs selected JMeter test plan, deploys HTML report to VPS               |
+| Workflow          | Trigger                    | What it does                                                                                    |
+| ----------------- | -------------------------- | ----------------------------------------------------------------------------------------------- |
+| `ci.yml`          | Push to `main`, PRs        | Deploys monitoring stack, runs API + Web tests, deploys reports, pushes test + pipeline metrics |
+| `performance.yml` | Manual (workflow_dispatch) | Runs selected JMeter test plan, deploys HTML report, pushes pipeline metrics                    |
 
 ### Infrastructure
 
@@ -276,8 +287,10 @@ JMeter test plans include an InfluxDB Backend Listener that sends metrics in rea
 │
 ├── infra/                                      # Monitoring stack
 │   ├── docker-compose.yml                      # Grafana + InfluxDB + Prometheus
-│   ├── grafana/dashboards/                     # Dashboard JSONs
-│   └── scripts/push-allure-metrics.sh          # CI metrics integration
+│   ├── grafana/dashboards/                     # 3 provisioned dashboard JSONs
+│   └── scripts/
+│       ├── push-allure-metrics.sh              # Test results + flaky metrics to InfluxDB
+│       └── push-pipeline-metrics.sh            # CI/CD job duration + status to InfluxDB
 │
 ├── .github/workflows/
 │   ├── ci.yml                                  # API + Web CI with metrics push

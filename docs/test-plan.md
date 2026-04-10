@@ -246,9 +246,17 @@ agibank-qa-automation-challenge/
 
 ### 6.3 Observabilidade
 
-- **Grafana:** Dashboards em tempo real para JMeter metrics, infra VPS e resultados de testes
-- **InfluxDB:** Time-series database para metricas de performance e Allure
-- **Prometheus + Node Exporter:** Metricas de infraestrutura da VPS (CPU, RAM, disk, network)
+A stack de observabilidade usa 3 dashboards focados, provisionados como codigo:
+
+| Dashboard                  | Fonte de Dados           | Proposito                                                         |
+| -------------------------- | ------------------------ | ----------------------------------------------------------------- |
+| Quality Overview           | InfluxDB (test_results)  | Resultados web/api separados, pass rate, trends, flaky tests      |
+| Performance (JMeter)       | InfluxDB (jmeter)        | Latencia (avg/p90/p95/p99), throughput, error rate, por transacao |
+| Pipeline & Delivery Health | InfluxDB (pipeline_runs) | Success rate, duracao por job, feedback time, falhas              |
+
+- **InfluxDB:** Time-series database para metricas de performance (JMeter), resultados de teste (Allure) e pipeline CI/CD
+- **Prometheus:** Coleta de metricas de infraestrutura
+- **Grafana:** Visualizacao unificada com dashboards provisionados automaticamente via CI/CD
 
 ---
 
