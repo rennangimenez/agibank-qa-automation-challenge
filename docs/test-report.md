@@ -214,11 +214,11 @@ Todos os testes seguem o padrao **Arrange-Act-Assert** com camadas de suporte:
 
 | Tipo      | Web    | API    | Total  | %        |
 | --------- | ------ | ------ | ------ | -------- |
-| Funcional | 3      | 15     | 18     | 45%      |
+| Funcional | 3      | 12     | 15     | 37.5%    |
 | Smoke     | 6      | —      | 6      | 15%      |
 | Seguranca | 5      | 6      | 11     | 27.5%    |
 | Contrato  | —      | 2      | 2      | 5%       |
-| Edge Case | —      | 3      | 3      | 7.5%     |
+| Edge Case | —      | 6      | 6      | 15%      |
 | **Total** | **14** | **26** | **40** | **100%** |
 
 ### 7.2 Cobertura por Severidade
@@ -226,8 +226,8 @@ Todos os testes seguem o padrao **Arrange-Act-Assert** com camadas de suporte:
 | Severidade  | Qtd    | %        |
 | ----------- | ------ | -------- |
 | 🔴 Blocker  | 3      | 7.5%     |
-| 🔴 Critical | 18     | 45%      |
-| 🟡 Normal   | 19     | 47.5%    |
+| 🔴 Critical | 16     | 40%      |
+| 🟡 Normal   | 21     | 52.5%    |
 | **Total**   | **40** | **100%** |
 
 ### 7.3 Estabilidade (Flaky Rate)

@@ -18,7 +18,7 @@ agibank-qa-automation-challenge/
 ├── performance-tests/   JMeter — BlazeDemo flight purchase (load + spike)
 ├── infra/               Grafana + InfluxDB + Prometheus (observability)
 ├── .github/workflows/   CI/CD pipelines
-├── docs/                Test plan, performance report
+├── docs/                Test plan, test report, performance report
 ├── pom.xml              Parent POM (Maven multi-module)
 └── package.json         Dev tooling (Husky, Prettier)
 ```
@@ -51,7 +51,7 @@ agibank-qa-automation-challenge/
 
 ## Test Coverage Summary
 
-**Total: 40 automated tests**
+**Total: 42 test scenarios** (14 Web + 26 API + 2 Performance plans)
 
 | Module              | Tests  | Categories                                                |
 | ------------------- | ------ | --------------------------------------------------------- |
@@ -244,8 +244,9 @@ infra/
 
 ## Documentation
 
-- [Test Plan](docs/test-plan.md) -- Complete test plan with all 40 scenarios
-- [Performance Report](docs/performance-report.md) -- Performance test results and analysis
+- [Test Plan](docs/test-plan.md) -- Complete test plan with all 42 scenarios and 25 proposed next steps
+- [Test Report (Web + API)](docs/test-report.md) -- Execution results for 14 Web + 26 API tests
+- [Performance Report](docs/performance-report.md) -- Load and spike test results on BlazeDemo
 
 ---
 
@@ -258,6 +259,9 @@ infra/
 │       ├── java/br/com/agibank/qa/api/
 │       │   ├── client/
 │       │   │   └── DogApiClient.java          # HTTP client layer
+│       │   ├── fixtures/
+│       │   │   ├── BreedData.java             # Test data: breeds, URLs, counts
+│       │   │   └── SecurityPayloads.java      # Test data: SQL injection, XSS, etc.
 │       │   └── tests/
 │       │       ├── BreedListTest.java          # /breeds/list/all
 │       │       ├── BreedImagesTest.java        # /breed/{breed}/images
@@ -274,6 +278,9 @@ infra/
 │       ├── pages/
 │       │   ├── BlogHomePage.java               # Home page actions
 │       │   └── SearchResultsPage.java          # Results page assertions
+│       ├── fixtures/
+│       │   ├── SearchData.java                 # Test data: search terms, payloads
+│       │   └── ExpectedResults.java            # Test data: URLs, selectors
 │       └── tests/
 │           ├── BlogSearchTest.java             # Search scenarios
 │           ├── BlogSmokeTest.java              # Smoke tests
@@ -297,8 +304,9 @@ infra/
 │   └── performance.yml                         # Manual perf trigger
 │
 ├── docs/
-│   ├── test-plan.md                            # Complete test plan
-│   └── performance-report.md                   # Performance results
+│   ├── test-plan.md                            # Complete test plan (42 scenarios)
+│   ├── test-report.md                          # Web + API execution results
+│   └── performance-report.md                   # Performance test results
 │
 ├── pom.xml                                     # Parent POM
 ├── mvnw / mvnw.cmd                             # Maven Wrapper
